@@ -1,0 +1,5 @@
+mainform 直接存取到server的屬性
+allelement不適合，因為每次都還得判斷是什麼類型
+所有物件都繼承DESelement
+
+
