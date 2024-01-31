@@ -12,18 +12,10 @@ namespace FactoryDiscreteEventSimulation
 {
     public partial class MainForm : Form
     {
+        // Initialize custom cursor manager
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern IntPtr LoadCursorFromFile(string path);
-        Cursor createCursor(byte[] buffer)
-        {
-            string streamName = Path.GetTempFileName();
-            FileStream fs = new FileStream(streamName, FileMode.Create, FileAccess.Write);
-            fs.Write(buffer, 0, buffer.Length);
-            fs.Flush();
-            fs.Close();
-            return new Cursor(LoadCursorFromFile(streamName));
-        }
-
+      
         string currentCursor;
         Rectangle theRectangle = new Rectangle(new Point(0, 0), new Size(0, 0));
         Point startPoint;
@@ -36,6 +28,8 @@ namespace FactoryDiscreteEventSimulation
         public MainForm()
         {
             InitializeComponent();
+            // Initialize custom cursor manager
+
             this.CenterToScreen();
             ppgObject.SelectedObject = theModel;
             cbbObject.Items.Add(theModel.Name);
@@ -245,7 +239,7 @@ namespace FactoryDiscreteEventSimulation
         {
             //ControlPaint.DrawReversibleLine(mouseDownScreenPoint, currentScreenPoint, Color.Red);
 
-            if (currentCursor == "link")
+            if (CursorManager.CurrentCursorType == CursorType.Itinerary)
             {
                 for (int i = allElements.Count - 1; i >= 0; i--)
                 {
@@ -304,7 +298,7 @@ namespace FactoryDiscreteEventSimulation
                 panelMain.Refresh();
 
             }
-            else if (currentCursor == "module")
+            else if (CursorManager.CurrentCursorType == CursorType.Module)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
 
@@ -324,7 +318,7 @@ namespace FactoryDiscreteEventSimulation
                 theRectangle = new Rectangle(0, 0, 0, 0);
 
             }
-            else if (currentCursor == "queue")
+            else if (CursorManager.CurrentCursorType == CursorType.Queue)
             {
 
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
@@ -358,7 +352,7 @@ namespace FactoryDiscreteEventSimulation
 
                 MessageBox.Show("You must put the queue in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            else if (currentCursor == "server")
+            else if (CursorManager.CurrentCursorType == CursorType.Server)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
                 if (theRectangle.Height < 15 || theRectangle.Height < 15)
@@ -394,7 +388,7 @@ namespace FactoryDiscreteEventSimulation
 
                 MessageBox.Show("You must put the server in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            else if (currentCursor == "machine")
+            else if (CursorManager.CurrentCursorType == CursorType.Machine)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
                 if (theRectangle.Height < 15 || theRectangle.Height < 15)
@@ -700,68 +694,51 @@ namespace FactoryDiscreteEventSimulation
             panelMain.Refresh();
         }
 
-        //courser
-        private void btnModule_Click(object sender, EventArgs e)
+        private void SetCursor(CursorType cursorType)
         {
-            IntPtr ptr = LoadCursorFromFile("cursorModule.cur");
-            currentCursor = "module";
+            IntPtr ptr = LoadCursorFromFile(CursorManager.cursorPaths[cursorType]);
+            CursorManager.CurrentCursorType = CursorType.Module;
             Cursor = new Cursor(ptr);
         }
+
+
+        private void btnModule_Click(object sender, EventArgs e)
+        {
+            SetCursor(CursorType.Module);
+        }
+
         private void btnServerTypes_DropDownItemClicked(object sender, RibbonItemEventArgs e)
         {
-            IntPtr ptr;
-            if (e.Item.Text == "Server")
-            {
-                ptr = LoadCursorFromFile("cursorServer.cur");
-                currentCursor = "server";
-            }
-            else
-            {
-                ptr = LoadCursorFromFile("cursorMachine.cur");
-                currentCursor = "machine";
-            }
-
-            Cursor = new Cursor(ptr);
+            SetCursor((e.Item.Text == "Server") ? CursorType.Server : CursorType.Machine);
         }
         private void btnQueue_Click(object sender, EventArgs e)
         {
-            IntPtr ptr = LoadCursorFromFile("cursorQueue.cur");
-            currentCursor = "queue";
-            Cursor = new Cursor(ptr);
+            SetCursor(CursorType.Queue);
         }
 
         private void btnItinerary_Click(object sender, EventArgs e)
         {
-            IntPtr ptr = LoadCursorFromFile("cursorItinerary.cur");
-            currentCursor = "itinerary";
-            Cursor = new Cursor(ptr);
+            SetCursor(CursorType.Itinerary);
         }
 
         private void btnLink_Click(object sender, EventArgs e)
         {
-            IntPtr ptr = LoadCursorFromFile("cursorLink.cur");
-            currentCursor = "link";
+            SetCursor(CursorType.Link);
             selectedElement = null;
-            Cursor = new Cursor(ptr);
         }
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
-            IntPtr ptr = LoadCursorFromFile("cursorSelect.cur");
-            currentCursor = "select";
-            Cursor = new Cursor(ptr);
+            SetCursor(CursorType.Select);
         }
         private void btnReleaser_Click(object sender, EventArgs e)
         {
-            IntPtr ptr = LoadCursorFromFile("cursorReleaser.cur");
-            currentCursor = "releaser";
-            Cursor = new Cursor(ptr);
+            SetCursor(CursorType.Release);
         }
         ContinuousRandomGeneratorType currentDistribution = ContinuousRandomGeneratorType.None;
         private void btn_DropDownItemClicked(object sender, RibbonItemEventArgs e)
         {
-            IntPtr ptr = LoadCursorFromFile("cursorDistribution.cur");
-            currentCursor = "distribution";
+            SetCursor(CursorType.Distribution);
 
             switch (e.Item.Text)
             {
@@ -782,7 +759,7 @@ namespace FactoryDiscreteEventSimulation
                     break;
             }
             selectedElement = null;
-            Cursor = new Cursor(ptr);
+       
         }
 
 

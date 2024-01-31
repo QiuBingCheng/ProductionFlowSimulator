@@ -81,6 +81,7 @@
     <Compile Include="Library\ContinuousRandomGeneratorType.cs" />
     <Compile Include="Library\ContinuousRandomVariateGenerator.cs" />
     <Compile Include="Library\ContinuousUniformRandomGenerator.cs" />
+    <Compile Include="Library\CursorManager.cs" />
     <Compile Include="Library\DESCollectionElementEditor.cs" />
     <Compile Include="Library\DESElement.cs" />
     <Compile Include="Library\DiscreteDataHistogram.cs" />
