@@ -6,12 +6,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D90BA9FA-AB6D-4A0F-8D15-D73DDAF3A39B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>FinalProject_R09546002_Bingcheng</RootNamespace>
-    <AssemblyName>FinalProject_R09546002_Bingcheng</AssemblyName>
+    <RootNamespace>ProductionFlowSimulator</RootNamespace>
+    <AssemblyName>ProductionFlowSimulator</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -123,19 +123,19 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -144,51 +144,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\newFile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\OpenFile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\saveFile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\saveFileAs.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\connect.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\distribution.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\itinerary.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\module.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\queue.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\select2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\server.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\delete.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\next2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\nextToEnd2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\reset.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="cursorDistribution.cur">
@@ -218,9 +173,33 @@
     <Content Include="cursorMachine.cur">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\production.png" />
-    <None Include="Resources\engineering.png" />
-    <None Include="Resources\releaser.png" />
+    <Content Include="Resources\cursors\cursorDistribution.cur" />
+    <Content Include="Resources\cursors\cursorItinerary.cur" />
+    <Content Include="Resources\cursors\cursorLink.cur" />
+    <Content Include="Resources\cursors\cursorMachine.cur" />
+    <Content Include="Resources\cursors\cursorModule.cur" />
+    <Content Include="Resources\cursors\cursorQueue.cur" />
+    <Content Include="Resources\cursors\cursorReleaser.cur" />
+    <Content Include="Resources\cursors\cursorSelect.cur" />
+    <Content Include="Resources\cursors\cursorServer.cur" />
+    <Content Include="Resources\images\connect.png" />
+    <Content Include="Resources\images\delete.png" />
+    <Content Include="Resources\images\distribution.png" />
+    <Content Include="Resources\images\engineering.png" />
+    <Content Include="Resources\images\itinerary.png" />
+    <Content Include="Resources\images\module.png" />
+    <Content Include="Resources\images\newFile.png" />
+    <Content Include="Resources\images\next2.png" />
+    <Content Include="Resources\images\nextToEnd2.png" />
+    <Content Include="Resources\images\OpenFile.png" />
+    <Content Include="Resources\images\production.png" />
+    <Content Include="Resources\images\queue.png" />
+    <Content Include="Resources\images\releaser.png" />
+    <Content Include="Resources\images\reset.png" />
+    <Content Include="Resources\images\saveFile.png" />
+    <Content Include="Resources\images\saveFileAs.png" />
+    <Content Include="Resources\images\select2.png" />
+    <Content Include="Resources\images\server.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">

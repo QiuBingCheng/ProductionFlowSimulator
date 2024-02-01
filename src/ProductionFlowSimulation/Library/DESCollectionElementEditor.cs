@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FactoryDiscreteEventSimulation
+namespace ProductionFlowSimulation
 {
     public class DESCollectionElementEditor:CollectionEditor
     {

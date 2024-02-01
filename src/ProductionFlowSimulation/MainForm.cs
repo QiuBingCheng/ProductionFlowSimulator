@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using Charting = System.Windows.Forms.DataVisualization.Charting;
-namespace FactoryDiscreteEventSimulation
+namespace ProductionFlowSimulation
 {
     public partial class MainForm : Form
     {
@@ -16,7 +16,6 @@ namespace FactoryDiscreteEventSimulation
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern IntPtr LoadCursorFromFile(string path);
       
-        string currentCursor;
         Rectangle theRectangle = new Rectangle(new Point(0, 0), new Size(0, 0));
         Point startPoint;
         Point endPoint;
@@ -29,6 +28,7 @@ namespace FactoryDiscreteEventSimulation
         {
             InitializeComponent();
             // Initialize custom cursor manager
+
 
             this.CenterToScreen();
             ppgObject.SelectedObject = theModel;
@@ -129,7 +129,7 @@ namespace FactoryDiscreteEventSimulation
             Control control = (Control)sender;
             startPoint = endPoint = control.PointToScreen(new Point(e.X, e.Y));
 
-            if (currentCursor == "select")
+            if (CursorManager.CurrentCursorType == CursorType.Select)
             {
 
                 for (int i = allElements.Count - 1; i >= 0; i--)
@@ -147,7 +147,7 @@ namespace FactoryDiscreteEventSimulation
                     }
                 }
             }
-            else if (currentCursor == "link")
+            else if (CursorManager.CurrentCursorType == CursorType.Link)
             {
                 for (int i = allElements.Count - 1; i >= 0; i--)
                 {
@@ -158,7 +158,7 @@ namespace FactoryDiscreteEventSimulation
                     }
                 }
             }
-            else if (currentCursor == "distribution")
+            else if (CursorManager.CurrentCursorType == CursorType.Distribution)
             {
 
                 foreach (Itinerary it in theModel.Itineraries)
@@ -191,13 +191,13 @@ namespace FactoryDiscreteEventSimulation
         {
             if (e.Button != MouseButtons.Left) return;
 
-            if (currentCursor == "link")
+            if (CursorManager.CurrentCursorType == CursorType.Link)
             {
                 ControlPaint.DrawReversibleLine(startPoint, endPoint, Color.Red);
                 endPoint = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
                 ControlPaint.DrawReversibleLine(startPoint, endPoint, Color.Red);
             }
-            else if (currentCursor == "select" && isDrag)
+            else if (CursorManager.CurrentCursorType == CursorType.Select && isDrag)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
 
@@ -426,13 +426,13 @@ namespace FactoryDiscreteEventSimulation
 
                 MessageBox.Show("You must put the machine in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            else if (currentCursor == "select" && isDrag)
+            else if (CursorManager.CurrentCursorType == CursorType.Select && isDrag)
             {
                 theRectangle.Location = panelMain.PointToClient(theRectangle.Location);
                 selectedElement.Bound = theRectangle;
                 isDrag = false;
             }
-            else if (currentCursor == "itinerary")
+            else if (CursorManager.CurrentCursorType == CursorType.Itinerary)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
                 if (theRectangle.Height < 15 || theRectangle.Height < 15)
@@ -455,7 +455,7 @@ namespace FactoryDiscreteEventSimulation
                 panelMain.Refresh();
                 theRectangle = new Rectangle(0, 0, 0, 0);
             }
-            else if (currentCursor == "releaser")
+            else if (CursorManager.CurrentCursorType == CursorType.Release)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
                 if (theRectangle.Height < 15 || theRectangle.Height < 15)
@@ -694,51 +694,43 @@ namespace FactoryDiscreteEventSimulation
             panelMain.Refresh();
         }
 
-        private void SetCursor(CursorType cursorType)
-        {
-            IntPtr ptr = LoadCursorFromFile(CursorManager.cursorPaths[cursorType]);
-            CursorManager.CurrentCursorType = CursorType.Module;
-            Cursor = new Cursor(ptr);
-        }
-
-
         private void btnModule_Click(object sender, EventArgs e)
         {
-            SetCursor(CursorType.Module);
+            this.Cursor = CursorManager.SetCursor(CursorType.Module);
         }
 
         private void btnServerTypes_DropDownItemClicked(object sender, RibbonItemEventArgs e)
         {
-            SetCursor((e.Item.Text == "Server") ? CursorType.Server : CursorType.Machine);
+            this.Cursor = CursorManager.SetCursor((e.Item.Text == "Server") ? CursorType.Server : CursorType.Machine);
         }
         private void btnQueue_Click(object sender, EventArgs e)
         {
-            SetCursor(CursorType.Queue);
+            this.Cursor = CursorManager.SetCursor(CursorType.Queue);
         }
 
         private void btnItinerary_Click(object sender, EventArgs e)
         {
-            SetCursor(CursorType.Itinerary);
+            this.Cursor = CursorManager.SetCursor(CursorType.Itinerary);
         }
 
         private void btnLink_Click(object sender, EventArgs e)
         {
-            SetCursor(CursorType.Link);
+            this.Cursor = CursorManager.SetCursor(CursorType.Link);
             selectedElement = null;
         }
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
-            SetCursor(CursorType.Select);
+            this.Cursor = CursorManager.SetCursor(CursorType.Select);
         }
         private void btnReleaser_Click(object sender, EventArgs e)
         {
-            SetCursor(CursorType.Release);
+            this.Cursor = CursorManager.SetCursor(CursorType.Release);
         }
         ContinuousRandomGeneratorType currentDistribution = ContinuousRandomGeneratorType.None;
         private void btn_DropDownItemClicked(object sender, RibbonItemEventArgs e)
         {
-            SetCursor(CursorType.Distribution);
+            this.Cursor = CursorManager.SetCursor(CursorType.Distribution);
 
             switch (e.Item.Text)
             {

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactoryDiscreteEventSimulation", "FactoryDiscreteEventSimulation\FactoryDiscreteEventSimulation.csproj", "{D90BA9FA-AB6D-4A0F-8D15-D73DDAF3A39B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductionFlowSimulation", "ProductionFlowSimulation\ProductionFlowSimulation.csproj", "{D90BA9FA-AB6D-4A0F-8D15-D73DDAF3A39B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
