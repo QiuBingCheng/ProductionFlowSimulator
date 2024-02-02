@@ -22,18 +22,22 @@ namespace DiscreteEventSimulationLibrary
 
     internal class CursorManager
     {
-        
+        //string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        //string parentDirectory = Path.Combine(currentDirectory, "..");
+
+        static string BaseDir = Path.Combine("..", "..", "Resources", "cursors");
+
         internal static Dictionary<CursorType, string> cursorPaths = new Dictionary<CursorType, string>
         {
-            { CursorType.Module,Path.Combine("Resources", "cursors","cursorModule.cur")},
-            { CursorType.Server,"cursorServer.cur"},
-            { CursorType.Machine,"cursorMachine.cur"},
-            { CursorType.Queue , "cursorQueue.cur"},
-            { CursorType.Itinerary,"cursorItinerary.cur"},
-            {CursorType.Select,"cursorSelect.cur" },
-            {CursorType.Release,"cursorReleaser.cur" },
-            {CursorType.Link,"cursorLink.cur" },
-            {CursorType.Distribution,"cursorDistribution.cur" }
+            { CursorType.Module,Path.Combine(BaseDir,"cursorModule.cur")},
+            { CursorType.Server,Path.Combine(BaseDir,"cursorServer.cur")},
+            { CursorType.Machine,Path.Combine(BaseDir,"cursorMachine.cur")},
+            { CursorType.Queue , Path.Combine(BaseDir, "cursorQueue.cur")},
+            { CursorType.Itinerary,Path.Combine(BaseDir, "cursorItinerary.cur")},
+            {CursorType.Select,Path.Combine(BaseDir, "cursorSelect.cur") },
+            {CursorType.Release,Path.Combine(BaseDir, "cursorReleaser.cur")},
+            {CursorType.Link,Path.Combine(BaseDir, "cursorLink.cur" )},
+            {CursorType.Distribution,Path.Combine(BaseDir, "cursorDistribution.cur")}
          };
 
         internal static CursorType CurrentCursorType { get; set; }
