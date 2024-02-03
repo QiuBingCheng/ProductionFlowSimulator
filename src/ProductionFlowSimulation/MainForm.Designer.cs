@@ -29,23 +29,46 @@ namespace ProductionFlowSimulation
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea37 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend37 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea38 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend38 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea39 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend39 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea40 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend40 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.ribbon1 = new System.Windows.Forms.Ribbon();
             this.ribbonTab1 = new System.Windows.Forms.RibbonTab();
             this.ribbonPanel3 = new System.Windows.Forms.RibbonPanel();
+            this.btnNew = new System.Windows.Forms.RibbonButton();
+            this.btnOpen = new System.Windows.Forms.RibbonButton();
+            this.btnSave = new System.Windows.Forms.RibbonButton();
+            this.btnSaveAs = new System.Windows.Forms.RibbonButton();
             this.ribbonTab2 = new System.Windows.Forms.RibbonTab();
             this.ribbonPanel5 = new System.Windows.Forms.RibbonPanel();
+            this.btnModule = new System.Windows.Forms.RibbonButton();
+            this.btnServerTypes = new System.Windows.Forms.RibbonButton();
+            this.ribbonButton4 = new System.Windows.Forms.RibbonButton();
+            this.ribbonButton5 = new System.Windows.Forms.RibbonButton();
+            this.btnQueue = new System.Windows.Forms.RibbonButton();
+            this.btnItinerary = new System.Windows.Forms.RibbonButton();
+            this.btn = new System.Windows.Forms.RibbonButton();
+            this.ribbonButton7 = new System.Windows.Forms.RibbonButton();
+            this.ribbonButton3 = new System.Windows.Forms.RibbonButton();
+            this.ribbonButton8 = new System.Windows.Forms.RibbonButton();
+            this.ribbonButton6 = new System.Windows.Forms.RibbonButton();
+            this.ribbonButton9 = new System.Windows.Forms.RibbonButton();
+            this.btnReleaser = new System.Windows.Forms.RibbonButton();
             this.ribbonPanel4 = new System.Windows.Forms.RibbonPanel();
+            this.btnSelect = new System.Windows.Forms.RibbonButton();
+            this.btnLink = new System.Windows.Forms.RibbonButton();
+            this.btnDelete = new System.Windows.Forms.RibbonButton();
             this.ribbonTab3 = new System.Windows.Forms.RibbonTab();
             this.ribbonPanel6 = new System.Windows.Forms.RibbonPanel();
+            this.btnReset = new System.Windows.Forms.RibbonButton();
+            this.btnNext = new System.Windows.Forms.RibbonButton();
+            this.btnNextToEnd = new System.Windows.Forms.RibbonButton();
             this.ribbonPanel7 = new System.Windows.Forms.RibbonPanel();
             this.cbShowAnimation = new System.Windows.Forms.RibbonCheckBox();
             this.nudInterval = new System.Windows.Forms.RibbonUpDown();
@@ -74,29 +97,6 @@ namespace ProductionFlowSimulation
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lbMessage = new System.Windows.Forms.ToolStripStatusLabel();
             this.ribbonTab4 = new System.Windows.Forms.RibbonTab();
-            this.btnNew = new System.Windows.Forms.RibbonButton();
-            this.btnOpen = new System.Windows.Forms.RibbonButton();
-            this.btnSave = new System.Windows.Forms.RibbonButton();
-            this.btnSaveAs = new System.Windows.Forms.RibbonButton();
-            this.btnModule = new System.Windows.Forms.RibbonButton();
-            this.btnServerTypes = new System.Windows.Forms.RibbonButton();
-            this.ribbonButton4 = new System.Windows.Forms.RibbonButton();
-            this.ribbonButton5 = new System.Windows.Forms.RibbonButton();
-            this.btnQueue = new System.Windows.Forms.RibbonButton();
-            this.btnItinerary = new System.Windows.Forms.RibbonButton();
-            this.btn = new System.Windows.Forms.RibbonButton();
-            this.ribbonButton7 = new System.Windows.Forms.RibbonButton();
-            this.ribbonButton3 = new System.Windows.Forms.RibbonButton();
-            this.ribbonButton8 = new System.Windows.Forms.RibbonButton();
-            this.ribbonButton6 = new System.Windows.Forms.RibbonButton();
-            this.ribbonButton9 = new System.Windows.Forms.RibbonButton();
-            this.btnReleaser = new System.Windows.Forms.RibbonButton();
-            this.btnSelect = new System.Windows.Forms.RibbonButton();
-            this.btnLink = new System.Windows.Forms.RibbonButton();
-            this.btnDelete = new System.Windows.Forms.RibbonButton();
-            this.btnReset = new System.Windows.Forms.RibbonButton();
-            this.btnNext = new System.Windows.Forms.RibbonButton();
-            this.btnNextToEnd = new System.Windows.Forms.RibbonButton();
             this.ribbonButton20 = new System.Windows.Forms.RibbonButton();
             this.ribbonButton1 = new System.Windows.Forms.RibbonButton();
             this.ribbonButton2 = new System.Windows.Forms.RibbonButton();
@@ -182,402 +182,6 @@ namespace ProductionFlowSimulation
             this.ribbonPanel3.Name = "ribbonPanel3";
             this.ribbonPanel3.Text = "File Operation";
             // 
-            // ribbonTab2
-            // 
-            this.ribbonTab2.Name = "ribbonTab2";
-            this.ribbonTab2.Panels.Add(this.ribbonPanel5);
-            this.ribbonTab2.Panels.Add(this.ribbonPanel4);
-            this.ribbonTab2.Text = "Modeling";
-            // 
-            // ribbonPanel5
-            // 
-            this.ribbonPanel5.ButtonMoreEnabled = false;
-            this.ribbonPanel5.ButtonMoreVisible = false;
-            this.ribbonPanel5.Items.Add(this.btnModule);
-            this.ribbonPanel5.Items.Add(this.btnServerTypes);
-            this.ribbonPanel5.Items.Add(this.btnQueue);
-            this.ribbonPanel5.Items.Add(this.btnItinerary);
-            this.ribbonPanel5.Items.Add(this.btn);
-            this.ribbonPanel5.Items.Add(this.btnReleaser);
-            this.ribbonPanel5.Name = "ribbonPanel5";
-            this.ribbonPanel5.Text = "New Object";
-            // 
-            // ribbonPanel4
-            // 
-            this.ribbonPanel4.ButtonMoreEnabled = false;
-            this.ribbonPanel4.ButtonMoreVisible = false;
-            this.ribbonPanel4.Items.Add(this.btnSelect);
-            this.ribbonPanel4.Items.Add(this.btnLink);
-            this.ribbonPanel4.Items.Add(this.btnDelete);
-            this.ribbonPanel4.Name = "ribbonPanel4";
-            this.ribbonPanel4.Text = "Operation";
-            // 
-            // ribbonTab3
-            // 
-            this.ribbonTab3.Name = "ribbonTab3";
-            this.ribbonTab3.Panels.Add(this.ribbonPanel6);
-            this.ribbonTab3.Panels.Add(this.ribbonPanel7);
-            this.ribbonTab3.Text = "Simulation";
-            // 
-            // ribbonPanel6
-            // 
-            this.ribbonPanel6.ButtonMoreEnabled = false;
-            this.ribbonPanel6.ButtonMoreVisible = false;
-            this.ribbonPanel6.Items.Add(this.btnReset);
-            this.ribbonPanel6.Items.Add(this.btnNext);
-            this.ribbonPanel6.Items.Add(this.btnNextToEnd);
-            this.ribbonPanel6.Name = "ribbonPanel6";
-            this.ribbonPanel6.Text = "Operation";
-            // 
-            // ribbonPanel7
-            // 
-            this.ribbonPanel7.ButtonMoreEnabled = false;
-            this.ribbonPanel7.ButtonMoreVisible = false;
-            this.ribbonPanel7.Items.Add(this.cbShowAnimation);
-            this.ribbonPanel7.Items.Add(this.nudInterval);
-            this.ribbonPanel7.Name = "ribbonPanel7";
-            this.ribbonPanel7.Text = "Animation";
-            // 
-            // cbShowAnimation
-            // 
-            this.cbShowAnimation.Checked = true;
-            this.cbShowAnimation.Name = "cbShowAnimation";
-            this.cbShowAnimation.Text = "Show Animation";
-            // 
-            // nudInterval
-            // 
-            this.nudInterval.Name = "nudInterval";
-            this.nudInterval.Text = "Interval";
-            this.nudInterval.TextBoxText = "200";
-            this.nudInterval.TextBoxWidth = 50;
-            this.nudInterval.Value = "100";
-            this.nudInterval.UpButtonClicked += new System.Windows.Forms.MouseEventHandler(this.nudInterval_UpButtonClicked);
-            this.nudInterval.DownButtonClicked += new System.Windows.Forms.MouseEventHandler(this.nudInterval_DownButtonClicked);
-            // 
-            // tcMain
-            // 
-            this.tcMain.Controls.Add(this.tabPage2);
-            this.tcMain.Controls.Add(this.tabPage1);
-            this.tcMain.Controls.Add(this.tabPage3);
-            this.tcMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tcMain.Location = new System.Drawing.Point(0, 150);
-            this.tcMain.Name = "tcMain";
-            this.tcMain.SelectedIndex = 0;
-            this.tcMain.Size = new System.Drawing.Size(1482, 803);
-            this.tcMain.TabIndex = 1;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.splitContainer1);
-            this.tabPage2.Location = new System.Drawing.Point(4, 32);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1474, 767);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Model";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.panelMain);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1468, 761);
-            this.splitContainer1.SplitterDistance = 902;
-            this.splitContainer1.TabIndex = 0;
-            // 
-            // panelMain
-            // 
-            this.panelMain.AutoScroll = true;
-            this.panelMain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMain.Location = new System.Drawing.Point(0, 0);
-            this.panelMain.Name = "panelMain";
-            this.panelMain.Size = new System.Drawing.Size(902, 761);
-            this.panelMain.TabIndex = 0;
-            this.panelMain.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panelMain_Scroll);
-            this.panelMain.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMain_Paint);
-            this.panelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelMain_MouseDown);
-            this.panelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelMain_MouseMove);
-            this.panelMain.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelMain_MouseUp);
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.splitContainer3);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.chartEvent);
-            this.splitContainer2.Size = new System.Drawing.Size(562, 761);
-            this.splitContainer2.SplitterDistance = 257;
-            this.splitContainer2.TabIndex = 0;
-            // 
-            // splitContainer3
-            // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Name = "splitContainer3";
-            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer3.Panel1
-            // 
-            this.splitContainer3.Panel1.Controls.Add(this.cbbObject);
-            // 
-            // splitContainer3.Panel2
-            // 
-            this.splitContainer3.Panel2.Controls.Add(this.ppgObject);
-            this.splitContainer3.Size = new System.Drawing.Size(562, 257);
-            this.splitContainer3.SplitterDistance = 25;
-            this.splitContainer3.TabIndex = 2;
-            // 
-            // cbbObject
-            // 
-            this.cbbObject.BackColor = System.Drawing.SystemColors.Highlight;
-            this.cbbObject.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbbObject.DropDownHeight = 120;
-            this.cbbObject.ForeColor = System.Drawing.SystemColors.Menu;
-            this.cbbObject.FormattingEnabled = true;
-            this.cbbObject.IntegralHeight = false;
-            this.cbbObject.Location = new System.Drawing.Point(0, 0);
-            this.cbbObject.Name = "cbbObject";
-            this.cbbObject.Size = new System.Drawing.Size(562, 31);
-            this.cbbObject.TabIndex = 4;
-            this.cbbObject.SelectedIndexChanged += new System.EventHandler(this.cbbObject_SelectedIndexChanged);
-            // 
-            // ppgObject
-            // 
-            this.ppgObject.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ppgObject.Location = new System.Drawing.Point(0, 0);
-            this.ppgObject.Name = "ppgObject";
-            this.ppgObject.Size = new System.Drawing.Size(562, 228);
-            this.ppgObject.TabIndex = 1;
-            this.ppgObject.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.ppgObject_PropertyValueChanged);
-            this.ppgObject.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.ppgObject_ControlAdded);
-            // 
-            // chartEvent
-            // 
-            chartArea37.Name = "ChartArea1";
-            this.chartEvent.ChartAreas.Add(chartArea37);
-            this.chartEvent.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend37.Name = "Legend1";
-            this.chartEvent.Legends.Add(legend37);
-            this.chartEvent.Location = new System.Drawing.Point(0, 0);
-            this.chartEvent.Name = "chartEvent";
-            this.chartEvent.Size = new System.Drawing.Size(562, 500);
-            this.chartEvent.TabIndex = 0;
-            this.chartEvent.Text = "chart1";
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.splitContainer4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 32);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1474, 747);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Simulation Results";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // splitContainer4
-            // 
-            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer4.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer4.Name = "splitContainer4";
-            // 
-            // splitContainer4.Panel1
-            // 
-            this.splitContainer4.Panel1.Controls.Add(this.splitContainer5);
-            // 
-            // splitContainer4.Panel2
-            // 
-            this.splitContainer4.Panel2.Controls.Add(this.splitContainer6);
-            this.splitContainer4.Size = new System.Drawing.Size(1468, 748);
-            this.splitContainer4.SplitterDistance = 644;
-            this.splitContainer4.TabIndex = 0;
-            // 
-            // splitContainer5
-            // 
-            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer5.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer5.Name = "splitContainer5";
-            this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer5.Panel1
-            // 
-            this.splitContainer5.Panel1.Controls.Add(this.label1);
-            this.splitContainer5.Panel1.Controls.Add(this.chartQueue);
-            // 
-            // splitContainer5.Panel2
-            // 
-            this.splitContainer5.Panel2.Controls.Add(this.tbSimulation);
-            this.splitContainer5.Panel2.Controls.Add(this.label2);
-            this.splitContainer5.Size = new System.Drawing.Size(644, 748);
-            this.splitContainer5.SplitterDistance = 295;
-            this.splitContainer5.TabIndex = 0;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(644, 25);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Queue Charting";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // chartQueue
-            // 
-            chartArea38.Name = "ChartArea1";
-            this.chartQueue.ChartAreas.Add(chartArea38);
-            this.chartQueue.Dock = System.Windows.Forms.DockStyle.Bottom;
-            legend38.Name = "Legend1";
-            this.chartQueue.Legends.Add(legend38);
-            this.chartQueue.Location = new System.Drawing.Point(0, 36);
-            this.chartQueue.Name = "chartQueue";
-            this.chartQueue.Size = new System.Drawing.Size(644, 259);
-            this.chartQueue.TabIndex = 0;
-            this.chartQueue.Text = "chart1";
-            this.chartQueue.Click += new System.EventHandler(this.chartQueue_Click);
-            // 
-            // tbSimulation
-            // 
-            this.tbSimulation.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tbSimulation.Location = new System.Drawing.Point(0, 26);
-            this.tbSimulation.Multiline = true;
-            this.tbSimulation.Name = "tbSimulation";
-            this.tbSimulation.ReadOnly = true;
-            this.tbSimulation.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbSimulation.Size = new System.Drawing.Size(644, 402);
-            this.tbSimulation.TabIndex = 1;
-            this.tbSimulation.WordWrap = false;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.DarkRed;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(0, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(644, 26);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Simulation Results";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // splitContainer6
-            // 
-            this.splitContainer6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer6.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer6.Name = "splitContainer6";
-            this.splitContainer6.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer6.Panel1
-            // 
-            this.splitContainer6.Panel1.Controls.Add(this.chartServerGantt);
-            this.splitContainer6.Panel1.Controls.Add(this.label3);
-            // 
-            // splitContainer6.Panel2
-            // 
-            this.splitContainer6.Panel2.Controls.Add(this.chartServerPie);
-            this.splitContainer6.Panel2.Controls.Add(this.label4);
-            this.splitContainer6.Size = new System.Drawing.Size(820, 748);
-            this.splitContainer6.SplitterDistance = 292;
-            this.splitContainer6.TabIndex = 0;
-            // 
-            // chartServerGantt
-            // 
-            chartArea39.Name = "ChartArea1";
-            this.chartServerGantt.ChartAreas.Add(chartArea39);
-            this.chartServerGantt.Dock = System.Windows.Forms.DockStyle.Bottom;
-            legend39.Name = "Legend1";
-            this.chartServerGantt.Legends.Add(legend39);
-            this.chartServerGantt.Location = new System.Drawing.Point(0, 36);
-            this.chartServerGantt.Name = "chartServerGantt";
-            this.chartServerGantt.Size = new System.Drawing.Size(820, 256);
-            this.chartServerGantt.TabIndex = 3;
-            this.chartServerGantt.Text = "chart1";
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.Color.DarkGreen;
-            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(0, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(820, 25);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Server Charting";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // chartServerPie
-            // 
-            chartArea40.Name = "ChartArea1";
-            this.chartServerPie.ChartAreas.Add(chartArea40);
-            this.chartServerPie.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend40.Name = "Legend1";
-            this.chartServerPie.Legends.Add(legend40);
-            this.chartServerPie.Location = new System.Drawing.Point(0, 29);
-            this.chartServerPie.Name = "chartServerPie";
-            this.chartServerPie.Size = new System.Drawing.Size(820, 423);
-            this.chartServerPie.TabIndex = 4;
-            this.chartServerPie.Text = "chart1";
-            // 
-            // label4
-            // 
-            this.label4.BackColor = System.Drawing.Color.LightGray;
-            this.label4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label4.Location = new System.Drawing.Point(0, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(820, 29);
-            this.label4.TabIndex = 2;
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tabPage3
-            // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 32);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1474, 747);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Service Consumers";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Location = new System.Drawing.Point(0, 931);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1482, 22);
-            this.statusStrip1.TabIndex = 2;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // lbMessage
-            // 
-            this.lbMessage.Margin = new System.Windows.Forms.Padding(0, 3, 0, 2);
-            this.lbMessage.Name = "lbMessage";
-            this.lbMessage.Size = new System.Drawing.Size(158, 19);
-            this.lbMessage.Text = "toolStripStatusLabel1";
-            // 
-            // ribbonTab4
-            // 
-            this.ribbonTab4.Name = "ribbonTab4";
-            this.ribbonTab4.Text = null;
-            // 
             // btnNew
             // 
             this.btnNew.Image = global::ProductionFlowSimulator.Properties.Resources.newFile;
@@ -612,6 +216,26 @@ namespace ProductionFlowSimulation
             this.btnSaveAs.Name = "btnSaveAs";
             this.btnSaveAs.SmallImage = ((System.Drawing.Image)(resources.GetObject("btnSaveAs.SmallImage")));
             this.btnSaveAs.Text = "Save As";
+            // 
+            // ribbonTab2
+            // 
+            this.ribbonTab2.Name = "ribbonTab2";
+            this.ribbonTab2.Panels.Add(this.ribbonPanel5);
+            this.ribbonTab2.Panels.Add(this.ribbonPanel4);
+            this.ribbonTab2.Text = "Modeling";
+            // 
+            // ribbonPanel5
+            // 
+            this.ribbonPanel5.ButtonMoreEnabled = false;
+            this.ribbonPanel5.ButtonMoreVisible = false;
+            this.ribbonPanel5.Items.Add(this.btnModule);
+            this.ribbonPanel5.Items.Add(this.btnServerTypes);
+            this.ribbonPanel5.Items.Add(this.btnQueue);
+            this.ribbonPanel5.Items.Add(this.btnItinerary);
+            this.ribbonPanel5.Items.Add(this.btn);
+            this.ribbonPanel5.Items.Add(this.btnReleaser);
+            this.ribbonPanel5.Name = "ribbonPanel5";
+            this.ribbonPanel5.Text = "New Object";
             // 
             // btnModule
             // 
@@ -739,6 +363,16 @@ namespace ProductionFlowSimulation
             this.btnReleaser.Text = "Releaser";
             this.btnReleaser.Click += new System.EventHandler(this.btnReleaser_Click);
             // 
+            // ribbonPanel4
+            // 
+            this.ribbonPanel4.ButtonMoreEnabled = false;
+            this.ribbonPanel4.ButtonMoreVisible = false;
+            this.ribbonPanel4.Items.Add(this.btnSelect);
+            this.ribbonPanel4.Items.Add(this.btnLink);
+            this.ribbonPanel4.Items.Add(this.btnDelete);
+            this.ribbonPanel4.Name = "ribbonPanel4";
+            this.ribbonPanel4.Text = "Operation";
+            // 
             // btnSelect
             // 
             this.btnSelect.Image = global::ProductionFlowSimulator.Properties.Resources.select;
@@ -765,6 +399,23 @@ namespace ProductionFlowSimulation
             this.btnDelete.SmallImage = ((System.Drawing.Image)(resources.GetObject("btnDelete.SmallImage")));
             this.btnDelete.Text = "Delete";
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // ribbonTab3
+            // 
+            this.ribbonTab3.Name = "ribbonTab3";
+            this.ribbonTab3.Panels.Add(this.ribbonPanel6);
+            this.ribbonTab3.Panels.Add(this.ribbonPanel7);
+            this.ribbonTab3.Text = "Simulation";
+            // 
+            // ribbonPanel6
+            // 
+            this.ribbonPanel6.ButtonMoreEnabled = false;
+            this.ribbonPanel6.ButtonMoreVisible = false;
+            this.ribbonPanel6.Items.Add(this.btnReset);
+            this.ribbonPanel6.Items.Add(this.btnNext);
+            this.ribbonPanel6.Items.Add(this.btnNextToEnd);
+            this.ribbonPanel6.Name = "ribbonPanel6";
+            this.ribbonPanel6.Text = "Operation";
             // 
             // btnReset
             // 
@@ -793,6 +444,354 @@ namespace ProductionFlowSimulation
             this.btnNextToEnd.SmallImage = ((System.Drawing.Image)(resources.GetObject("btnNextToEnd.SmallImage")));
             this.btnNextToEnd.Text = "Run";
             this.btnNextToEnd.Click += new System.EventHandler(this.btnNextToEnd_Click);
+            // 
+            // ribbonPanel7
+            // 
+            this.ribbonPanel7.ButtonMoreEnabled = false;
+            this.ribbonPanel7.ButtonMoreVisible = false;
+            this.ribbonPanel7.Items.Add(this.cbShowAnimation);
+            this.ribbonPanel7.Items.Add(this.nudInterval);
+            this.ribbonPanel7.Name = "ribbonPanel7";
+            this.ribbonPanel7.Text = "Animation";
+            // 
+            // cbShowAnimation
+            // 
+            this.cbShowAnimation.Checked = true;
+            this.cbShowAnimation.Name = "cbShowAnimation";
+            this.cbShowAnimation.Text = "Show Animation";
+            // 
+            // nudInterval
+            // 
+            this.nudInterval.Name = "nudInterval";
+            this.nudInterval.Text = "Interval";
+            this.nudInterval.TextBoxText = "200";
+            this.nudInterval.TextBoxWidth = 50;
+            this.nudInterval.Value = "100";
+            this.nudInterval.UpButtonClicked += new System.Windows.Forms.MouseEventHandler(this.nudInterval_UpButtonClicked);
+            this.nudInterval.DownButtonClicked += new System.Windows.Forms.MouseEventHandler(this.nudInterval_DownButtonClicked);
+            // 
+            // tcMain
+            // 
+            this.tcMain.Controls.Add(this.tabPage2);
+            this.tcMain.Controls.Add(this.tabPage1);
+            this.tcMain.Controls.Add(this.tabPage3);
+            this.tcMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tcMain.Location = new System.Drawing.Point(0, 150);
+            this.tcMain.Name = "tcMain";
+            this.tcMain.SelectedIndex = 0;
+            this.tcMain.Size = new System.Drawing.Size(1482, 695);
+            this.tcMain.TabIndex = 1;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.splitContainer1);
+            this.tabPage2.Location = new System.Drawing.Point(4, 28);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(1474, 663);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Model";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.panelMain);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Size = new System.Drawing.Size(1468, 657);
+            this.splitContainer1.SplitterDistance = 902;
+            this.splitContainer1.TabIndex = 0;
+            // 
+            // panelMain
+            // 
+            this.panelMain.AutoScroll = true;
+            this.panelMain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelMain.Location = new System.Drawing.Point(0, 0);
+            this.panelMain.Name = "panelMain";
+            this.panelMain.Size = new System.Drawing.Size(902, 657);
+            this.panelMain.TabIndex = 0;
+            this.panelMain.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panelMain_Scroll);
+            this.panelMain.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMain_Paint);
+            this.panelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PanelMain_MouseDown);
+            this.panelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelMain_MouseMove);
+            this.panelMain.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelMain_MouseUp);
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.splitContainer3);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.chartEvent);
+            this.splitContainer2.Size = new System.Drawing.Size(562, 657);
+            this.splitContainer2.SplitterDistance = 221;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.cbbObject);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.ppgObject);
+            this.splitContainer3.Size = new System.Drawing.Size(562, 221);
+            this.splitContainer3.SplitterDistance = 25;
+            this.splitContainer3.TabIndex = 2;
+            // 
+            // cbbObject
+            // 
+            this.cbbObject.BackColor = System.Drawing.SystemColors.Highlight;
+            this.cbbObject.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbbObject.DropDownHeight = 120;
+            this.cbbObject.ForeColor = System.Drawing.SystemColors.Menu;
+            this.cbbObject.FormattingEnabled = true;
+            this.cbbObject.IntegralHeight = false;
+            this.cbbObject.Location = new System.Drawing.Point(0, 0);
+            this.cbbObject.Name = "cbbObject";
+            this.cbbObject.Size = new System.Drawing.Size(562, 27);
+            this.cbbObject.TabIndex = 4;
+            this.cbbObject.SelectedIndexChanged += new System.EventHandler(this.cbbObject_SelectedIndexChanged);
+            // 
+            // ppgObject
+            // 
+            this.ppgObject.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ppgObject.Location = new System.Drawing.Point(0, 0);
+            this.ppgObject.Name = "ppgObject";
+            this.ppgObject.Size = new System.Drawing.Size(562, 192);
+            this.ppgObject.TabIndex = 1;
+            this.ppgObject.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.ppgObject_PropertyValueChanged);
+            this.ppgObject.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.ppgObject_ControlAdded);
+            // 
+            // chartEvent
+            // 
+            chartArea1.Name = "ChartArea1";
+            this.chartEvent.ChartAreas.Add(chartArea1);
+            this.chartEvent.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend1.Name = "Legend1";
+            this.chartEvent.Legends.Add(legend1);
+            this.chartEvent.Location = new System.Drawing.Point(0, 0);
+            this.chartEvent.Name = "chartEvent";
+            this.chartEvent.Size = new System.Drawing.Size(562, 432);
+            this.chartEvent.TabIndex = 0;
+            this.chartEvent.Text = "chart1";
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.splitContainer4);
+            this.tabPage1.Location = new System.Drawing.Point(4, 28);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(1474, 771);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Simulation Results";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.splitContainer5);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.splitContainer6);
+            this.splitContainer4.Size = new System.Drawing.Size(1468, 765);
+            this.splitContainer4.SplitterDistance = 644;
+            this.splitContainer4.TabIndex = 0;
+            // 
+            // splitContainer5
+            // 
+            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer5.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer5.Name = "splitContainer5";
+            this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer5.Panel1
+            // 
+            this.splitContainer5.Panel1.Controls.Add(this.label1);
+            this.splitContainer5.Panel1.Controls.Add(this.chartQueue);
+            // 
+            // splitContainer5.Panel2
+            // 
+            this.splitContainer5.Panel2.Controls.Add(this.tbSimulation);
+            this.splitContainer5.Panel2.Controls.Add(this.label2);
+            this.splitContainer5.Size = new System.Drawing.Size(644, 765);
+            this.splitContainer5.SplitterDistance = 301;
+            this.splitContainer5.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(644, 25);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Queue Charting";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // chartQueue
+            // 
+            chartArea2.Name = "ChartArea1";
+            this.chartQueue.ChartAreas.Add(chartArea2);
+            this.chartQueue.Dock = System.Windows.Forms.DockStyle.Bottom;
+            legend2.Name = "Legend1";
+            this.chartQueue.Legends.Add(legend2);
+            this.chartQueue.Location = new System.Drawing.Point(0, 42);
+            this.chartQueue.Name = "chartQueue";
+            this.chartQueue.Size = new System.Drawing.Size(644, 259);
+            this.chartQueue.TabIndex = 0;
+            this.chartQueue.Text = "chart1";
+            this.chartQueue.Click += new System.EventHandler(this.chartQueue_Click);
+            // 
+            // tbSimulation
+            // 
+            this.tbSimulation.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbSimulation.Location = new System.Drawing.Point(0, 26);
+            this.tbSimulation.Multiline = true;
+            this.tbSimulation.Name = "tbSimulation";
+            this.tbSimulation.ReadOnly = true;
+            this.tbSimulation.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbSimulation.Size = new System.Drawing.Size(644, 402);
+            this.tbSimulation.TabIndex = 1;
+            this.tbSimulation.WordWrap = false;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.DarkRed;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label2.ForeColor = System.Drawing.Color.White;
+            this.label2.Location = new System.Drawing.Point(0, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(644, 26);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Simulation Results";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // splitContainer6
+            // 
+            this.splitContainer6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer6.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer6.Name = "splitContainer6";
+            this.splitContainer6.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer6.Panel1
+            // 
+            this.splitContainer6.Panel1.Controls.Add(this.chartServerGantt);
+            this.splitContainer6.Panel1.Controls.Add(this.label3);
+            // 
+            // splitContainer6.Panel2
+            // 
+            this.splitContainer6.Panel2.Controls.Add(this.chartServerPie);
+            this.splitContainer6.Panel2.Controls.Add(this.label4);
+            this.splitContainer6.Size = new System.Drawing.Size(820, 765);
+            this.splitContainer6.SplitterDistance = 298;
+            this.splitContainer6.TabIndex = 0;
+            // 
+            // chartServerGantt
+            // 
+            chartArea3.Name = "ChartArea1";
+            this.chartServerGantt.ChartAreas.Add(chartArea3);
+            this.chartServerGantt.Dock = System.Windows.Forms.DockStyle.Bottom;
+            legend3.Name = "Legend1";
+            this.chartServerGantt.Legends.Add(legend3);
+            this.chartServerGantt.Location = new System.Drawing.Point(0, 42);
+            this.chartServerGantt.Name = "chartServerGantt";
+            this.chartServerGantt.Size = new System.Drawing.Size(820, 256);
+            this.chartServerGantt.TabIndex = 3;
+            this.chartServerGantt.Text = "chart1";
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.DarkGreen;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label3.ForeColor = System.Drawing.Color.White;
+            this.label3.Location = new System.Drawing.Point(0, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(820, 25);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Server Charting";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // chartServerPie
+            // 
+            chartArea4.Name = "ChartArea1";
+            this.chartServerPie.ChartAreas.Add(chartArea4);
+            this.chartServerPie.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend4.Name = "Legend1";
+            this.chartServerPie.Legends.Add(legend4);
+            this.chartServerPie.Location = new System.Drawing.Point(0, 29);
+            this.chartServerPie.Name = "chartServerPie";
+            this.chartServerPie.Size = new System.Drawing.Size(820, 434);
+            this.chartServerPie.TabIndex = 4;
+            this.chartServerPie.Text = "chart1";
+            // 
+            // label4
+            // 
+            this.label4.BackColor = System.Drawing.Color.LightGray;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label4.Location = new System.Drawing.Point(0, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(820, 29);
+            this.label4.TabIndex = 2;
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(4, 28);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(1474, 771);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Service Consumers";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 823);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1482, 22);
+            this.statusStrip1.TabIndex = 2;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // lbMessage
+            // 
+            this.lbMessage.Name = "lbMessage";
+            this.lbMessage.Size = new System.Drawing.Size(158, 19);
+            this.lbMessage.Text = "toolStripStatusLabel1";
+            // 
+            // ribbonTab4
+            // 
+            this.ribbonTab4.Name = "ribbonTab4";
+            this.ribbonTab4.Text = null;
             // 
             // ribbonButton20
             // 
@@ -828,9 +827,9 @@ namespace ProductionFlowSimulation
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 23F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1482, 953);
+            this.ClientSize = new System.Drawing.Size(1482, 845);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tcMain);
             this.Controls.Add(this.ribbon1);

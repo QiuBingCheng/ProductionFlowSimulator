@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using Charting = System.Windows.Forms.DataVisualization.Charting;
+
 namespace ProductionFlowSimulation
 {
     public partial class MainForm : Form
@@ -16,7 +17,8 @@ namespace ProductionFlowSimulation
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern IntPtr LoadCursorFromFile(string path);
       
-        Rectangle theRectangle = new Rectangle(new Point(0, 0), new Size(0, 0));
+        Rectangle theRectangle = new Rectangle();
+
         Point startPoint;
         Point endPoint;
         DESElement selectedElement = null;
@@ -40,11 +42,6 @@ namespace ProductionFlowSimulation
             cbbObject.DropDownStyle = ComboBoxStyle.DropDownList;
             cbbObject.BackColor = Color.Blue;
             cbbObject.ForeColor = Color.AntiqueWhite;
-
-            //add right key menu
-            ContextMenu cm = new ContextMenu();
-            cm.MenuItems.Add("Item 1");
-            cm.MenuItems.Add("Item 2");
 
             //
             btnNext.Enabled = false;
@@ -124,68 +121,94 @@ namespace ProductionFlowSimulation
             panelMain.Refresh();
         }
 
-        private void panelMain_MouseDown(object sender, MouseEventArgs e)
+        #region MouseDown
+        private void PanelMain_MouseDown(object sender, MouseEventArgs e)
         {
-            Control control = (Control)sender;
-            startPoint = endPoint = control.PointToScreen(new Point(e.X, e.Y));
+            theRectangle = new Rectangle();
+            startPoint = endPoint = panelMain.PointToScreen(e.Location);
 
             if (CursorManager.CurrentCursorType == CursorType.Select)
             {
-
-                for (int i = allElements.Count - 1; i >= 0; i--)
-                {
-                    if (allElements[i].Bound.Contains(e.Location))
-                    {
-                        selectedElement = allElements[i];
-                        ppgObject.SelectedObject = selectedElement;
-                        cbbObject.SelectedIndex = i + 1;
-
-                        Point pt = control.PointToScreen(new Point(selectedElement.Bound.X, selectedElement.Bound.Y));
-                        theRectangle = new Rectangle(pt.X, pt.Y, selectedElement.Bound.Width, selectedElement.Bound.Height);
-                        isDrag = true;
-                        break;
-                    }
-                }
+                HandleSelectMode(e);
             }
             else if (CursorManager.CurrentCursorType == CursorType.Link)
             {
-                for (int i = allElements.Count - 1; i >= 0; i--)
-                {
-                    if (allElements[i].Bound.Contains(e.Location))
-                    {
-                        selectedElement = allElements[i];
-                        break;
-                    }
-                }
+                HandleLinkMode(e);
             }
             else if (CursorManager.CurrentCursorType == CursorType.Distribution)
             {
+                HandleDistributionMode(e);
+            }
+        }
 
-                foreach (Itinerary it in theModel.Itineraries)
+        private void HandleSelectMode(MouseEventArgs e)
+        {
+            for (int i = allElements.Count - 1; i >= 0; i--)
+            {
+                if (allElements[i].Bound.Contains(e.Location))
                 {
-                    foreach (Visit visit in it.Visits)
-                    {
-                        if (visit.Bound.Contains(e.Location))
-                        {
-                            visit.ServiceTimeGeneratorType = currentDistribution;
-                            panelMain.Refresh();
-                            theRectangle = new Rectangle(0, 0, 0, 0);
-                            return;
-                        }
-                    }
+                    selectedElement = allElements[i];
+                    ppgObject.SelectedObject = selectedElement;
+                    cbbObject.SelectedIndex = i + 1;
+
+                    Point pt = panelMain.PointToScreen(new Point(selectedElement.Bound.X, selectedElement.Bound.Y));
+                    theRectangle = new Rectangle(pt.X, pt.Y, selectedElement.Bound.Width, selectedElement.Bound.Height);
+                    isDrag = true;
+                    break;
                 }
-                foreach (ClientGenerator cg in theModel.ClientGenerators)
+            }
+        }
+
+        private void HandleLinkMode(MouseEventArgs e)
+        {
+            for (int i = allElements.Count - 1; i >= 0; i--)
+            {
+                if (allElements[i].Bound.Contains(e.Location))
                 {
-                    if (cg.Bound.Contains(e.Location))
+                    selectedElement = allElements[i];
+                    break;
+                }
+            }
+        }
+
+        private void HandleDistributionMode(MouseEventArgs e)
+        {
+            foreach (Itinerary it in theModel.Itineraries)
+            {
+                foreach (Visit visit in it.Visits)
+                {
+                    if (visit.Bound.Contains(e.Location))
                     {
-                        cg.InterarrivalType = currentDistribution;
-                        panelMain.Refresh();
-                        theRectangle = new Rectangle(0, 0, 0, 0);
+                        HandleVisitDistribution(visit);
                         return;
                     }
                 }
             }
+
+            foreach (ClientGenerator clientGenerator in theModel.ClientGenerators)
+            {
+                if (clientGenerator.Bound.Contains(e.Location))
+                {
+                    HandleClientGeneratorDistribution(clientGenerator);
+                    return;
+                }
+            }
         }
+
+        private void HandleVisitDistribution(Visit visit)
+        {
+            visit.ServiceTimeGeneratorType = currentDistribution;
+            panelMain.Refresh();
+        }
+
+        private void HandleClientGeneratorDistribution(ClientGenerator clientGenerator)
+        {
+            clientGenerator.InterarrivalType = currentDistribution;
+            panelMain.Refresh();
+        }
+
+        #endregion
+       
 
         private void panelMain_MouseMove(object sender, MouseEventArgs e)
         {
@@ -194,14 +217,14 @@ namespace ProductionFlowSimulation
             if (CursorManager.CurrentCursorType == CursorType.Link)
             {
                 ControlPaint.DrawReversibleLine(startPoint, endPoint, Color.Red);
-                endPoint = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
+                endPoint = panelMain.PointToScreen(e.Location);
                 ControlPaint.DrawReversibleLine(startPoint, endPoint, Color.Red);
             }
             else if (CursorManager.CurrentCursorType == CursorType.Select && isDrag)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
 
-                endPoint = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
+                endPoint = panelMain.PointToScreen(e.Location);
                 theRectangle.X += endPoint.X - startPoint.X;
                 theRectangle.Y += endPoint.Y - startPoint.Y;
 
@@ -211,27 +234,25 @@ namespace ProductionFlowSimulation
             }
             else
             {
-                endPoint = ((Control)sender).PointToScreen(new Point(e.X, e.Y));
-                DrawRectangleWhenMove(endPoint);
+                endPoint = panelMain.PointToScreen(e.Location);
+                DrawRectangleWhenMove();
+
             }
         }
 
-        private void DrawRectangleWhenMove(Point endPoint)
+        private void DrawRectangleWhenMove()
         {
-            // Hide the previous rectangle by calling the 
-            // DrawReversibleFrame method with the same parameters.
-            ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
+            // Clear the previous rectangle
+            if (theRectangle != Rectangle.Empty)
+            {
+                ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
+            }
 
-            // Calculate the endpoint and dimensions for the new 
-            // rectangle, again using the PointToScreen method.
+            // Calculate the endpoint and dimensions for the new rectangle, again using the PointToScreen method.
+            theRectangle = new Rectangle(startPoint,
+                new Size(endPoint.X - startPoint.X, endPoint.Y - startPoint.Y));
 
-            int width = endPoint.X - startPoint.X;
-            int height = endPoint.Y - startPoint.Y;
-            theRectangle = new Rectangle(startPoint.X,
-                startPoint.Y, width, height);
-
-            // Draw the new rectangle by calling DrawReversibleFrame
-            // again.  
+            // Draw the new rectangle by calling DrawReversibleFrame again.  
             ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
         }
 
