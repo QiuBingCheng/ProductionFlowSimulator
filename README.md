@@ -6,5 +6,5 @@ The simulator provides an interactive user interface for simulating production p
 
 # Screenshot
 
-![Index](screenshot/final.jpg)
+![Index](screenshot/Final.jpg)
 
