@@ -135,6 +135,13 @@ namespace DiscreteEventSimulationLibrary
             GenerationWeights = new List<int>();
         }
 
+        internal override void DrawLineToCollections(Graphics g)
+        {
+            // Draw line to Itineraries collections
+            foreach (Itinerary it in Itineraries)
+                g.DrawLine(Pens.Black, GetCenterPoint(), it.GetCenterPoint());
+        }
+
         public void UpdateNextClientArrivalEvent(double currentTime)
         {
             if (currentTime > ceasesTime) return;

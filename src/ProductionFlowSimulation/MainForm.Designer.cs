@@ -585,7 +585,6 @@ namespace ProductionFlowSimulation
             this.ppgObject.Size = new System.Drawing.Size(562, 192);
             this.ppgObject.TabIndex = 1;
             this.ppgObject.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.ppgObject_PropertyValueChanged);
-            this.ppgObject.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.ppgObject_ControlAdded);
             // 
             // chartEvent
             // 

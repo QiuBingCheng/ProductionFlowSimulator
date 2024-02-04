@@ -10,28 +10,32 @@ namespace DiscreteEventSimulationLibrary
     {
         protected static Font ElementFont = new Font("consola",12);
         private string name;
+        public int hashCode;
         private static int HandleSize = 3;
 
-        [CategoryAttribute("Display"), DescriptionAttribute("")]
+        [Category("Display"), Description("")]
         public Rectangle Bound { get; set; } = new Rectangle(10, 10, 100, 50);
 
-        [CategoryAttribute("Display"), DescriptionAttribute("")]
+        [Category("Display"), Description("")]
         public string Name { get => name; set => name = value; }
 
-        [CategoryAttribute("Display"), DescriptionAttribute("")]
+        [Category("Display"), Description("")]
         public Color BackColor = Color.Gray;
        
         public virtual void Draw(Graphics g)
         {
-            g.DrawRectangle(Pens.Gray, Bound);
+           g.DrawRectangle(Pens.Gray, Bound);
         }
+
         public Point GetCenterPoint ()
         {
             return new Point(Bound.Left + Bound.Width / 2,
                              Bound.Top + Bound.Height / 2);
         }
-        public int hashCode;
-        public void DrawSelectionHandles(Graphics g)
+
+        internal virtual void DrawLineToCollections(Graphics g) { }
+
+        public void DrawSelectionBorder(Graphics g)
         {
             // four corners
             Rectangle rect = Rectangle.Empty;
@@ -47,8 +51,10 @@ namespace DiscreteEventSimulationLibrary
             g.FillRectangle(Brushes.Black, rect);
 
             //emphasized edge
-            Pen grayPen = new Pen(Color.Gray, 1);
-            grayPen.DashStyle = DashStyle.Dash;
+            Pen grayPen = new Pen(Color.Gray, 1)
+            {
+                DashStyle = DashStyle.Dash
+            };
             g.DrawRectangle(grayPen,Bound);
 
         }
@@ -56,7 +62,7 @@ namespace DiscreteEventSimulationLibrary
         public virtual void SaveToFile(StreamWriter sw)
         {
             sw.WriteLine($"Name: {Name}");
-            sw.WriteLine($"HashCode: {this.GetHashCode()}");
+            sw.WriteLine($"HashCode: {GetHashCode()}");
             sw.WriteLine($"Bound: {Bound.X} {Bound.Y} {Bound.Width} {Bound.Height}");
             sw.WriteLine($"BackColor: {BackColor.ToArgb()}");
         }

@@ -1,6 +1,8 @@
 ﻿using DiscreteEventSimulationLibrary;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -20,6 +22,8 @@ namespace ProductionFlowSimulation
         DESElement selectedElement = null;
         DiscreteEventSimulationModel theModel = new DiscreteEventSimulationModel();
         List<DESElement> allElements = new List<DESElement>();
+        ContinuousRandomGeneratorType currentDistribution = ContinuousRandomGeneratorType.None;
+
         bool isDrag;
 
         public MainForm()
@@ -28,6 +32,14 @@ namespace ProductionFlowSimulation
             InitializeChart();
             InitializeElementPropertyEditor();
             this.CenterToScreen();
+            WindowState = FormWindowState.Maximized;
+            MinimumSize = MaximumSize;
+        }
+
+        #region Initialization
+        private void panelMain_Scroll(object sender, ScrollEventArgs e)
+        {
+            panelMain.Refresh();
         }
 
         private void InitializeElementPropertyEditor()
@@ -39,8 +51,6 @@ namespace ProductionFlowSimulation
             DESCollectionElementEditor.DESElementRemovedEvent += DESCollectionElementEditor_DESElementRemoved;
             DESCollectionElementEditor.DESElementPropertyValueChangedEvent += DESCollectionElementEditor_DESElementPropertyValueChangedEvent;
             cbbObject.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbbObject.BackColor = Color.Blue;
-            cbbObject.ForeColor = Color.AntiqueWhite;
         }
 
         private void InitializeChart()
@@ -94,9 +104,183 @@ namespace ProductionFlowSimulation
             chartServerGantt.ChartAreas[0].AxisX.Minimum = 0;
             chartServerGantt.ChartAreas[0].AxisX.LabelAutoFitMaxFontSize = 12;
         }
+        #endregion
 
-        #region operation trigger
-  
+        #region File Operation
+        private void btnNew_Click(object sender, EventArgs e)
+        {
+            panelMain.BackColor = Color.White;
+            allElements.Clear();
+            int count = cbbObject.Items.Count;
+            for (int i = 1; i < count; i++)
+                cbbObject.Items.RemoveAt(1);
+
+            theModel = new DiscreteEventSimulationModel();
+            cbbObject.SelectedIndex = 0;
+            ppgObject.SelectedObject = theModel;
+
+            panelMain.Refresh();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            if (theModel == null) return;
+            SaveFileDialog dlg = new SaveFileDialog();
+            if (dlg.ShowDialog() != DialogResult.OK) return;
+            StreamWriter sw = new StreamWriter(dlg.FileName);
+            theModel.SaveToFile(sw);
+            sw.Close();
+        }
+
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            if (dlg.ShowDialog() != DialogResult.OK) return;
+            StreamReader sr = new StreamReader(dlg.FileName);
+
+            panelMain.BackColor = Color.White;
+            allElements.Clear();
+            int count = cbbObject.Items.Count;
+            for (int i = 1; i < count; i++)
+                cbbObject.Items.RemoveAt(1);
+
+            theModel = new DiscreteEventSimulationModel();
+            cbbObject.SelectedIndex = 0;
+            ppgObject.SelectedObject = theModel;
+            theModel.ReadFromFile(sr);
+            theModel.ExportDESElements(allElements);
+
+            cbbObject.Items.Clear();
+            cbbObject.Items.Add(theModel.Name);
+            foreach (DESElement ele in allElements)
+                cbbObject.Items.Add(ele.Name);
+
+            cbbObject.SelectedIndex = 0;
+            panelMain.Refresh();
+            sr.Close();
+
+            BtnSelect_Click(null, null);
+        }
+        #endregion
+
+        #region Simulation Operation
+        private void nudInterval_UpButtonClicked(object sender, MouseEventArgs e)
+        {
+            int value = Convert.ToInt32(nudInterval.TextBoxText) + 100;
+            if (value > 5000)
+                nudInterval.TextBoxText = "5000";
+            else
+                nudInterval.TextBoxText = $"{value}";
+        }
+
+        private void nudInterval_DownButtonClicked(object sender, MouseEventArgs e)
+        {
+            int value = Convert.ToInt32(nudInterval.TextBoxText) - 100;
+            if (value < 10)
+                nudInterval.TextBoxText = "10";
+            else
+                nudInterval.TextBoxText = $"{value}";
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            theModel.RunOneEvent();
+            UpdateEventChart();
+            ppgObject.Refresh();
+            UpdateChartOfClient();
+        }
+
+        private void btnNextToEnd_Click(object sender, EventArgs e)
+        {
+            int sleepDuration = Convert.ToInt32(nudInterval.TextBoxText);
+            while (true)
+            {
+                if (theModel.RunOneEvent())
+                {
+                    if (cbShowAnimation.Checked)
+                    {
+                        ppgObject.Refresh();
+                        UpdateChartOfClient();
+                        UpdateEventChart();
+                        Thread.Sleep(sleepDuration);
+                    }
+                }
+                else
+                {
+                    tcMain.SelectedIndex = 1;
+                    btnNext.Enabled = false;
+                    btnNextToEnd.Enabled = false;
+                    break;
+                }
+            }
+            tbSimulation.Text = theModel.GetSimulationResult();
+
+            //chart
+            ResetChart();
+
+            //server
+            List<Server> servers = theModel.GetAllServers();
+            int serverCount = servers.Count();
+            chartServerGantt.ChartAreas[0].AxisX.Maximum = serverCount + 1;
+
+            int pieY = 0;
+            int pieX = 0;
+            int rowCount = (int)Math.Ceiling(serverCount / 3.0);
+            int rowHeight = (int)(100.0 / rowCount) - 5;
+            int pieWidth = 33;
+            int i = 0;
+            foreach (Server server in servers)
+            {
+                //pie chart
+                CreatePieChartArea(server.PieStates);
+                //next row
+                if (i % 3 == 0 && i != 0)
+                {
+                    pieY += rowHeight;
+                    pieX = 0;
+                }
+                chartServerPie.ChartAreas[server.Name].Position.X = pieX;
+                chartServerPie.ChartAreas[server.Name].Position.Y = pieY + 3;
+                chartServerPie.ChartAreas[server.Name].Position.Height = rowHeight;
+                chartServerPie.ChartAreas[server.Name].Position.Width = pieWidth;
+                pieX += pieWidth;
+
+                //gantt chart
+                server.GanttStates.ChartArea = chartServerGantt.ChartAreas[0].Name;
+                chartServerGantt.Series.Add(server.GanttStates);
+                server.GanttStates.IsVisibleInLegend = false;
+
+                Charting.CustomLabel label = new Charting.CustomLabel();
+                label.Text = server.Name;
+                label.FromPosition = i + 0.6;
+                label.ToPosition = i + 1.4;
+                chartServerGantt.ChartAreas[0].AxisX.CustomLabels.Add(label);
+
+                i++;
+            }
+
+            //queue
+            List<TimeQueue> queues = theModel.GetAllQueues();
+            double maxTime = 0;
+            List<Color> colors = new List<Color> { Color.Blue, Color.Red, Color.Green, Color.Purple, Color.Brown };
+            i = 0;
+            foreach (TimeQueue queue in queues)
+            {
+                if (queue.SeriesClients.Points.Max(p => p.XValue) > maxTime)
+                    maxTime = queue.SeriesClients.Points.Max(p => p.XValue);
+
+                queue.SeriesClients.ChartArea = chartQueue.ChartAreas[0].Name;
+                queue.SeriesClients.Color = colors[i++];
+                chartQueue.Series.Add(queue.SeriesClients);
+            }
+            chartQueue.ChartAreas[0].AxisX.RoundAxisValues();
+            chartQueue.ChartAreas[0].AxisX.Maximum = maxTime;
+
+        }
+        #endregion
+
+        #region Operation trigger
+
         private void btnDelete_Click(object sender, EventArgs e)
         {
             if (selectedElement == null)
@@ -109,8 +293,9 @@ namespace ProductionFlowSimulation
             {
                 theModel.ClientGenerators.Remove((ClientGenerator)selectedElement);
             }
-            allElements.Remove(selectedElement);
-            cbbObject.Items.Remove(selectedElement.Name);
+
+            RemoveElement(selectedElement);
+   
             cbbObject.SelectedIndex = 0;
             selectedElement = null;
             ppgObject.SelectedObject = theModel;
@@ -152,7 +337,6 @@ namespace ProductionFlowSimulation
         {
             this.Cursor = CursorManager.SetCursor(CursorType.Release);
         }
-        ContinuousRandomGeneratorType currentDistribution = ContinuousRandomGeneratorType.None;
         private void Btn_DropDownItemClicked(object sender, RibbonItemEventArgs e)
         {
             this.Cursor = CursorManager.SetCursor(CursorType.Distribution);
@@ -176,7 +360,6 @@ namespace ProductionFlowSimulation
                     break;
             }
             selectedElement = null;
-
         }
 
 
@@ -201,31 +384,132 @@ namespace ProductionFlowSimulation
         }
         #endregion
 
+        #region Property Grid
         private void DESCollectionElementEditor_DESElementPropertyValueChangedEvent(object s, PropertyValueChangedEventArgs e)
         {
-
             panelMain.Refresh();
         }
 
-        private void DESCollectionElementEditor_DESElementRemoved(object sender, DESElement e)
+        private void DESCollectionElementEditor_DESElementRemoved(object sender, DESElement element)
         {
-            if (e.GetType().Name == "Itinerary")
+            RemoveElement(element);
+            panelMain.Refresh();
+        }
+        private void ppgObject_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            panelMain.Refresh();
+            for (int i = 0; i < allElements.Count; i++)
             {
-
+                cbbObject.Items[i + 1] = allElements[i].Name;
             }
-            allElements.Remove(e);
-            cbbObject.Items.Remove(e.Name);
-            panelMain.Refresh();
         }
 
-        private void DESCollectionElementEditor_DESElementAdded(object sender, DESElement e)
+        private void cbbObject_SelectedIndexChanged(object sender, EventArgs e)
         {
-            allElements.Add(e);
-            cbbObject.Items.Add(e.Name);
+            if (cbbObject.SelectedIndex == 0)
+            {
+                selectedElement = null;
+                ppgObject.SelectedObject = theModel;
+            }
+            else
+            {
+                selectedElement = allElements[cbbObject.SelectedIndex - 1];
+                ppgObject.SelectedObject = selectedElement;
+                BtnSelect_Click(null, null);
+            }
+            panelMain.Refresh();
+        }
+        #endregion
+
+        #region Add Element
+        private void AddElement(DESElement element)
+        {
+            // Add element to collection and to drop-down list for the Property Grid.
+            allElements.Add(element);
+            cbbObject.Items.Add(element.Name);
+        }
+
+        private void DESCollectionElementEditor_DESElementAdded(object sender, DESElement element)
+        {
+            AddElement(element);
             panelMain.Refresh();
         }
 
-        #region MouseDown
+        private void AddServiceNode()
+        {
+            ServiceNode serviceNode = new ServiceNode
+            {
+                Bound = theRectangle
+            };
+
+            AddElement(serviceNode);
+            theModel.ServiceNodes.Add(serviceNode);
+        }
+
+        private void AddServer(ServiceNode serviceNode)
+        {
+            Server server = new Server
+            {
+                Bound = theRectangle,
+                ParentNode = serviceNode
+            };
+            serviceNode.Servers.Add(server);
+
+            AddElement(server);
+        }
+
+        private void AddQueue(ServiceNode serviceNode)
+        {
+            TimeQueue queue = new TimeQueue
+            {
+                Bound = theRectangle
+            };
+            serviceNode.Queues.Add(queue);
+            AddElement(queue);
+        }
+
+        private void AddMachine(ServiceNode serviceNode)
+        {
+            Machine machine = new Machine
+            {
+                Bound = theRectangle,
+                ParentNode = serviceNode
+            };
+            serviceNode.Servers.Add(machine);
+            AddElement(machine);
+        }
+
+        private void AddItinerary()
+        {
+            Itinerary it = new Itinerary
+            {
+                Bound = theRectangle
+            };
+            AddElement(it);
+            theModel.Itineraries.Add(it);
+        }
+
+        private void AddClientGenerator()
+        {
+            ClientGenerator cg = new ClientGenerator
+            {
+                Bound = theRectangle
+            };
+            AddElement(cg);
+            theModel.ClientGenerators.Add(cg);
+        }
+        #endregion
+
+        #region Remove Element
+        private void RemoveElement(DESElement element)
+        {
+            // Remove element from collection and from drop-down list for the Property Grid.
+            allElements.Remove(element);
+            cbbObject.Items.Remove(element.Name);
+        }
+        #endregion
+
+        #region Mouse Down
         private void PanelMain_MouseDown(object sender, MouseEventArgs e)
         {
             theRectangle = new Rectangle();
@@ -312,8 +596,8 @@ namespace ProductionFlowSimulation
         }
 
         #endregion
-       
 
+        #region Mouse Move
         private void panelMain_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left) return;
@@ -359,75 +643,9 @@ namespace ProductionFlowSimulation
             // Draw the new rectangle border by calling DrawReversibleFrame again.  
             ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
         }
+        #endregion
 
-        private void AddServiceNode()
-        {
-            ServiceNode serviceNode = new ServiceNode
-            {
-                Bound = theRectangle
-            };
-            allElements.Add(serviceNode);
-            cbbObject.Items.Add(serviceNode.Name);
-            theModel.ServiceNodes.Add(serviceNode);
-        }
-
-        private void AddServer(ServiceNode serviceNode)
-        {
-            Server server = new Server
-            {
-                Bound = theRectangle,
-                ParentNode = serviceNode
-            };
-            serviceNode.Servers.Add(server);
-            allElements.Add(server);
-            cbbObject.Items.Add(server.Name);
-        }
-      
-        private void AddQueue(ServiceNode serviceNode)
-        {
-            TimeQueue queue = new TimeQueue
-            {
-                Bound = theRectangle
-            };
-            serviceNode.Queues.Add(queue);
-            allElements.Add(queue);
-            cbbObject.Items.Add(queue.Name);
-        }
-
-        private void AddMachine(ServiceNode serviceNode)
-        {
-            Machine machine = new Machine
-            {
-                Bound = theRectangle,
-                ParentNode = serviceNode
-            };
-            serviceNode.Servers.Add(machine);
-            allElements.Add(machine);
-            cbbObject.Items.Add(machine.Name);
-        }
-
-        private void AddItinerary()
-        {
-            Itinerary it = new Itinerary
-            {
-                Bound = theRectangle
-            };
-            allElements.Add(it);
-            cbbObject.Items.Add(it.Name);
-            theModel.Itineraries.Add(it);
-        }
-
-        private void AddClientGenerator()
-        {
-            ClientGenerator cg = new ClientGenerator
-            {
-                Bound = theRectangle
-            };
-            allElements.Add(cg);
-            cbbObject.Items.Add(cg.Name);
-            theModel.ClientGenerators.Add(cg);
-        }
-
+        #region Mouse UP
         private ServiceNode GetServiceNodeContainsTheRectangle()
         {
             ServiceNode serviceNode;
@@ -449,7 +667,7 @@ namespace ProductionFlowSimulation
         {
             //ControlPaint.DrawReversibleLine(mouseDownScreenPoint, currentScreenPoint, Color.Red);
 
-            if (CursorManager.CurrentCursorType == CursorType.Itinerary)
+            if (CursorManager.CurrentCursorType == CursorType.Link)
             {
                 for (int i = allElements.Count - 1; i >= 0; i--)
                 {
@@ -534,7 +752,7 @@ namespace ProductionFlowSimulation
 
                 theRectangle.Location = panelMain.PointToClient(theRectangle.Location);
                 ServiceNode serviceNode = GetServiceNodeContainsTheRectangle();
-                if (serviceNode is null)
+                if (serviceNode == null)
                 {
                     MessageBox.Show("You must put the queue in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -559,7 +777,7 @@ namespace ProductionFlowSimulation
                     theRectangle.Width = theRectangle.Height;
 
                 ServiceNode serviceNode = GetServiceNodeContainsTheRectangle();
-                if (serviceNode is null)
+                if (serviceNode == null)
                 {
                     MessageBox.Show("You must put the server in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -585,7 +803,7 @@ namespace ProductionFlowSimulation
 
 
                 ServiceNode serviceNode = GetServiceNodeContainsTheRectangle();
-                if (serviceNode is null)
+                if (serviceNode == null)
                 {
                     MessageBox.Show("You must put the machine in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -637,37 +855,24 @@ namespace ProductionFlowSimulation
             panelMain.Refresh();
             theRectangle = new Rectangle();
         }
+        #endregion
 
+        #region Paint
         private void panelMain_Paint(object sender, PaintEventArgs e)
         {
             //service node
             if (allElements.Count == 0) return;
 
-            //draw line
+            //draw service node and line
+            HashSet<string> elementHasCollections = new HashSet<string> { "Server","Machine","ClientGenerator"};
+           
             foreach (DESElement ele in allElements)
             {
                 if (ele.GetType().Name == "ServiceNode")
                     ele.Draw(e.Graphics);
 
-                else if (ele.GetType().Name == "Server")
-                {
-                    Server server = (Server)ele;
-                    foreach (TimeQueue queue in server.Queues)
-                        e.Graphics.DrawLine(Pens.Black, queue.GetCenterPoint(), server.GetCenterPoint());
-                       
-                }
-                else if(ele.GetType().Name == "Machine")
-                {
-                    Machine machine = (Machine)ele;
-                    foreach (TimeQueue queue in machine.Queues)
-                        e.Graphics.DrawLine(Pens.Black, queue.GetCenterPoint(), machine.GetCenterPoint());
-                }
-                else if (ele.GetType().Name == "ClientGenerator")
-                {
-                    ClientGenerator cg = (ClientGenerator)ele;
-                    foreach (Itinerary it in cg.Itineraries)
-                        e.Graphics.DrawLine(Pens.Black, cg.GetCenterPoint(), it.GetCenterPoint());
-                }
+                else if (elementHasCollections.Contains(ele.GetType().Name))
+                    ele.DrawLineToCollections(e.Graphics);
             }
 
             //itinerary 
@@ -746,248 +951,13 @@ namespace ProductionFlowSimulation
 
             if (selectedElement != null)
             {
-                selectedElement.DrawSelectionHandles(e.Graphics);
+                selectedElement.DrawSelectionBorder(e.Graphics);
             }
         }
+        #endregion
+     
+        #region Chart Function
 
-        private void ppgObject_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-        {
-            panelMain.Refresh();
-            for (int i = 0; i < allElements.Count; i++)
-            {
-                cbbObject.Items[i + 1] = allElements[i].Name;
-            }
-        }
-
-        private void cbbObject_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cbbObject.SelectedIndex == 0)
-            {
-                selectedElement = null;
-                ppgObject.SelectedObject = theModel;
-            }
-            else
-            {
-                selectedElement = allElements[cbbObject.SelectedIndex - 1];
-                ppgObject.SelectedObject = selectedElement;
-                BtnSelect_Click(null, null);
-            }
-            panelMain.Refresh();
-        }
-
-        //file operation
-        private void btnNew_Click(object sender, EventArgs e)
-        {
-            panelMain.BackColor = Color.White;
-            allElements.Clear();
-            int count = cbbObject.Items.Count;
-            for (int i = 1; i < count; i++)
-                cbbObject.Items.RemoveAt(1);
-
-            theModel = new DiscreteEventSimulationModel();
-            cbbObject.SelectedIndex = 0;
-            ppgObject.SelectedObject = theModel;
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            if (theModel == null) return;
-            SaveFileDialog dlg = new SaveFileDialog();
-            if (dlg.ShowDialog() != DialogResult.OK) return;
-            StreamWriter sw = new StreamWriter(dlg.FileName);
-            theModel.SaveToFile(sw);
-            sw.Close();
-        }
-
-        private void btnOpen_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog dlg = new OpenFileDialog();
-            if (dlg.ShowDialog() != DialogResult.OK) return;
-            StreamReader sr = new StreamReader(dlg.FileName);
-
-            panelMain.BackColor = Color.White;
-            allElements.Clear();
-            int count = cbbObject.Items.Count;
-            for (int i = 1; i < count; i++)
-                cbbObject.Items.RemoveAt(1);
-
-            theModel = new DiscreteEventSimulationModel();
-            cbbObject.SelectedIndex = 0;
-            ppgObject.SelectedObject = theModel;
-            theModel.ReadFromFile(sr);
-            theModel.ExportDESElements(allElements);
-
-            cbbObject.Items.Clear();
-            cbbObject.Items.Add(theModel.Name);
-            foreach (DESElement ele in allElements)
-                cbbObject.Items.Add(ele.Name);
-
-            cbbObject.SelectedIndex = 0;
-            panelMain.Refresh();
-            sr.Close();
-
-            BtnSelect_Click(null, null);
-        }
-
-        //
-       
-
-        private void UpdateEventChart()
-        {
-            chartEvent.Series[0].Points.Clear();
-            foreach (DiscreteEvent discreteEvent in theModel.FeatureEventList)
-            {
-                // string[] events = { "Arrival", "ServiceDone", "BreakDown", "Repaired" };
-                Charting.DataPoint point;
-                switch (discreteEvent.GetType().Name)
-                {
-                    case "ClientArrivalEvent":
-                        point = new Charting.DataPoint(discreteEvent.EventTime, 1);
-                        point.Color = Color.Blue;
-                        chartEvent.Series[0].Points.Add(point);
-                        break;
-                    case "ServiceCompleteEvent":
-                        point = new Charting.DataPoint(discreteEvent.EventTime, 2);
-                        point.Color = Color.Blue;
-                        chartEvent.Series[0].Points.Add(point);
-                        break;
-                    case "BreakDownEvent":
-                        point = new Charting.DataPoint(discreteEvent.EventTime, 3);
-                        point.Color = Color.Red;
-                        chartEvent.Series[0].Points.Add(point);
-                        break;
-                    case "RepairEvent":
-                        point = new Charting.DataPoint(discreteEvent.EventTime, 4);
-                        point.Color = Color.Blue;
-                        chartEvent.Series[0].Points.Add(point);
-                        break;
-                }
-            }
-            chartEvent.Refresh();
-        }
-
-        private void panelMain_Scroll(object sender, ScrollEventArgs e)
-        {
-            panelMain.Refresh();
-        }
-        private void nudInterval_UpButtonClicked(object sender, MouseEventArgs e)
-        {
-            int value = Convert.ToInt32(nudInterval.TextBoxText) + 100;
-            if (value > 5000)
-                nudInterval.TextBoxText = "5000";
-            else
-                nudInterval.TextBoxText = $"{value}";
-        }
-
-        private void nudInterval_DownButtonClicked(object sender, MouseEventArgs e)
-        {
-            int value = Convert.ToInt32(nudInterval.TextBoxText) - 100;
-            if (value < 10)
-                nudInterval.TextBoxText = "10";
-            else
-                nudInterval.TextBoxText = $"{value}";
-        }
-
-        private void ppgObject_ControlAdded(object sender, ControlEventArgs e)
-        {
-            
-        }
-
-        private void btnNext_Click(object sender, EventArgs e)
-        {
-            theModel.RunOneEvent();
-            UpdateEventChart();
-            ppgObject.Refresh();
-            UpdateChartOfClient();
-        }
-
-        private void btnNextToEnd_Click(object sender, EventArgs e)
-        {
-            int sleepDuration = Convert.ToInt32(nudInterval.TextBoxText);
-            while (true)
-            {
-                if (theModel.RunOneEvent())
-                {
-                    if (cbShowAnimation.Checked)
-                    {
-                        ppgObject.Refresh();
-                        UpdateChartOfClient();
-                        UpdateEventChart();
-                        Thread.Sleep(sleepDuration);
-                    }
-                }
-                else
-                {
-                    tcMain.SelectedIndex = 1;
-                    btnNext.Enabled = false;
-                    btnNextToEnd.Enabled = false;
-                    break;
-                }
-            }
-            tbSimulation.Text = theModel.GetSimulationResult();
-
-            //chart
-            ResetChart();
-
-            //server
-            List<Server> servers = theModel.GetAllServers();
-            int serverCount = servers.Count();
-            chartServerGantt.ChartAreas[0].AxisX.Maximum = serverCount+1;
-
-            int pieY = 0;
-            int pieX = 0;
-            int rowCount = (int)Math.Ceiling(serverCount / 3.0);
-            int rowHeight = (int)(100.0/ rowCount)-5;
-            int pieWidth = 33;
-            int i = 0;
-            foreach (Server server in servers)
-            {
-                //pie chart
-                CreatePieChartArea(server.PieStates);
-                //next row
-                if(i%3 == 0 && i!=0)
-                {
-                    pieY += rowHeight;
-                    pieX = 0;
-                }
-                chartServerPie.ChartAreas[server.Name].Position.X = pieX;
-                chartServerPie.ChartAreas[server.Name].Position.Y = pieY+3;
-                chartServerPie.ChartAreas[server.Name].Position.Height = rowHeight;
-                chartServerPie.ChartAreas[server.Name].Position.Width = pieWidth;
-                pieX += pieWidth;
-                
-                //gantt chart
-                server.GanttStates.ChartArea = chartServerGantt.ChartAreas[0].Name;
-                chartServerGantt.Series.Add(server.GanttStates);
-                server.GanttStates.IsVisibleInLegend = false;
-
-                Charting.CustomLabel label = new Charting.CustomLabel(); 
-                label.Text = server.Name;
-                label.FromPosition = i + 0.6;
-                label.ToPosition = i + 1.4;
-                chartServerGantt.ChartAreas[0].AxisX.CustomLabels.Add(label);
-
-                i++;
-            }
-
-            //queue
-            List<TimeQueue> queues = theModel.GetAllQueues();
-            double maxTime = 0;
-            List<Color> colors = new List<Color> { Color.Blue,Color.Red,Color.Green,Color.Purple,Color.Brown};
-            i = 0;
-            foreach (TimeQueue queue in queues)
-            {
-                if (queue.SeriesClients.Points.Max(p=>p.XValue)> maxTime)
-                    maxTime = queue.SeriesClients.Points.Max(p => p.XValue);
-
-                queue.SeriesClients.ChartArea = chartQueue.ChartAreas[0].Name;
-                queue.SeriesClients.Color = colors[i++];
-                chartQueue.Series.Add(queue.SeriesClients);
-            }
-            chartQueue.ChartAreas[0].AxisX.RoundAxisValues();
-            chartQueue.ChartAreas[0].AxisX.Maximum = maxTime;
-
-        }
         public void CreatePieChartArea(Charting.Series series)
         {
             Charting.ChartArea chartArea = new Charting.ChartArea(series.Name);
@@ -1022,12 +992,43 @@ namespace ProductionFlowSimulation
                     server.Draw(graphics);
             }
         }
-
+        private void UpdateEventChart()
+        {
+            chartEvent.Series[0].Points.Clear();
+            foreach (DiscreteEvent discreteEvent in theModel.FeatureEventList)
+            {
+                // string[] events = { "Arrival", "ServiceDone", "BreakDown", "Repaired" };
+                Charting.DataPoint point;
+                switch (discreteEvent.EventType)
+                {
+                    case DiscreteEventType.ClientArrival:
+                        point = new Charting.DataPoint(discreteEvent.EventTime, 1);
+                        point.Color = Color.Blue;
+                        chartEvent.Series[0].Points.Add(point);
+                        break;
+                    case DiscreteEventType.ServerComplete:
+                        point = new Charting.DataPoint(discreteEvent.EventTime, 2);
+                        point.Color = Color.Blue;
+                        chartEvent.Series[0].Points.Add(point);
+                        break;
+                    case DiscreteEventType.ServerBreakDown:
+                        point = new Charting.DataPoint(discreteEvent.EventTime, 3);
+                        point.Color = Color.Red;
+                        chartEvent.Series[0].Points.Add(point);
+                        break;
+                    case DiscreteEventType.ServerRepair:
+                        point = new Charting.DataPoint(discreteEvent.EventTime, 4);
+                        point.Color = Color.Blue;
+                        chartEvent.Series[0].Points.Add(point);
+                        break;
+                }
+            }
+            chartEvent.Refresh();
+        }
         private void chartQueue_Click(object sender, EventArgs e)
         {
 
         }
-
-      
+        #endregion
     }
 }

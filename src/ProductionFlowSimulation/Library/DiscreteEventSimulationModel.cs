@@ -88,22 +88,23 @@ namespace DiscreteEventSimulationLibrary
             simulationEngine.Reset();
             //ProcessedEventCount
             foreach (ServiceNode node in serviceNodes) node.Reset();
-            foreach (ClientGenerator cg in clientGenerators)
+            foreach (ClientGenerator clientGenerator in clientGenerators)
             {
-                cg.Reset();
-                cg.UpdateNextClientArrivalEvent(SimulationClock);
+                clientGenerator.Reset();
+                clientGenerator.UpdateNextClientArrivalEvent(SimulationClock);
             }
 
             //chart
             int count = 0;
-            foreach (ServiceNode sn in serviceNodes)
+            foreach (ServiceNode serviceNode in serviceNodes)
             {
-                for (int i = 0; i < sn.Servers.Count; i++)
+                for (int i = 0; i < serviceNode.Servers.Count; i++)
                 {
-                    sn.Servers[i].serverOrder = ++count;
+                    serviceNode.Servers[i].serverOrder = ++count;
                 }
             }
         }
+
         public List<Server> GetAllServers()
         {
             List<Server> servers = new List<Server> { };

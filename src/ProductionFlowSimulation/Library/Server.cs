@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms.DataVisualization.Charting;
 
 namespace DiscreteEventSimulationLibrary
@@ -35,33 +34,35 @@ namespace DiscreteEventSimulationLibrary
 
         static Server()
         {
-            ganttColors = new Dictionary<ServerState, Color>();
-            ganttColors.Add(ServerState.Free, Color.Lime);
-            ganttColors.Add(ServerState.Busy, Color.Red);
-            ganttColors.Add(ServerState.Blocked, Color.Yellow);
-            ganttColors.Add(ServerState.Breakdown, Color.Purple);
+            ganttColors = new Dictionary<ServerState, Color>
+            {
+                { ServerState.Free, Color.Lime },
+                { ServerState.Busy, Color.Red },
+                { ServerState.Blocked, Color.Yellow },
+                { ServerState.Breakdown, Color.Purple }
+            };
         }
       
         public Server()
         {
             ServiceTimeGeneratorType = ContinuousRandomGeneratorType.Uniform;
-            base.Name = $"Server{++instanceCount}";
+            Name = $"Server{++instanceCount}";
             queues = new List<TimeQueue>();
-            ganttStates = new Series(base.Name);
-            pieStates = new Series(base.Name);
+            ganttStates = new Series(Name);
+            pieStates = new Series(Name);
             BackColor = Color.Green;
         }
 
         #region Property
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [Category("Statistics"), Description("")]
         public int ClientServedCount { get => clientServedCount; }
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [Category("Statistics"), Description("")]
         public double BusyTime { get => busyTime; }
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [Category("Statistics"), Description("")]
         public double FreeTime { get => freeTime; }
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [Category("Statistics"), Description("")]
         public double BlockedTime { get => blockedTime; }
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [Category("Statistics"), Description("")]
         public double ServiceTimeAverage
         {
             get
@@ -72,7 +73,7 @@ namespace DiscreteEventSimulationLibrary
                 return 0;
             }
         }
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [Category("Statistics"), Description("")]
         public double ServiceTimeSTD
         {
             get
@@ -84,19 +85,19 @@ namespace DiscreteEventSimulationLibrary
         }
 
 
-        [CategoryAttribute("Display"), DescriptionAttribute("")]
+        [Category("Display"), Description("")]
         public ServerState CurrentState { get => currentState; }
 
-        [CategoryAttribute("Collections"), DescriptionAttribute("")]
+        [Category("Collections"), Description("")]
         public List<TimeQueue> Queues { get => queues; set => queues = value; }
 
         [Browsable(false)]
         public double LastEventTime { get => lastEventTime; set => lastEventTime = value; }
 
-        [CategoryAttribute("Model"), DescriptionAttribute("")]
+        [Category("Model"), Description("")]
         public Client ClientUnderService { get => clientUnderService; set => clientUnderService = value; }
 
-        [CategoryAttribute("Model"), DescriptionAttribute(""), DisplayName("6.ServiceTimeGeneratorType")]
+        [Category("Model"), Description(""), DisplayName("6.ServiceTimeGeneratorType")]
         public ContinuousRandomGeneratorType ServiceTimeGeneratorType
         {
             get => serviceTimeGeneratorType;
@@ -111,7 +112,7 @@ namespace DiscreteEventSimulationLibrary
         }
     
         [TypeConverter(typeof(ExpandableObjectConverter)),DisplayName("7.ServiceTimeGenerator")]
-        [CategoryAttribute("Model"), DescriptionAttribute("")]
+        [Category("Model"), Description("")]
         public RandomVariateGenerator ServiceTimeGenerator { get => serviceTimeGenerator; set => serviceTimeGenerator = value; }
 
         // collection
@@ -174,12 +175,17 @@ namespace DiscreteEventSimulationLibrary
             DrawClientInService(g);
             
         }
+        
+        internal override void DrawLineToCollections(Graphics g)
+        {
+            foreach (TimeQueue queue in Queues)
+                g.DrawLine(Pens.Black, GetCenterPoint(),queue.GetCenterPoint());
+        }
 
         protected void DrawClientInService(Graphics g)
         {
             if (clientUnderService != null)
             {
-                Brush b = new SolidBrush(clientUnderService.BackColor);
                 Point cp = GetCenterPoint();
                 clientBound = new Rectangle(cp.X - clientUnderService.Bound.Width / 2, cp.Y - clientUnderService.Bound.Height / 2, clientUnderService.Bound.Width, clientUnderService.Bound.Height);
                 GraphicUtil.DrawSpecificType(clientUnderService.TheItinerary.Shape, clientBound, clientUnderService.BackColor, g);
@@ -187,10 +193,12 @@ namespace DiscreteEventSimulationLibrary
         }
         protected void UpdateSeries(ServerState state, double lastEventTime, double currentTime)
         {
-            DataPoint dp = new DataPoint();
-            dp.XValue = serverOrder;
-            dp.YValues = new double[] { lastEventTime, currentTime };
-            dp.Color = ganttColors[state];
+            DataPoint dp = new DataPoint
+            {
+                XValue = serverOrder,
+                YValues = new double[] { lastEventTime, currentTime },
+                Color = ganttColors[state]
+            };
             ganttStates.Points.Add(dp);
 
             pieStates.Points[(int)state].YValues[0] += (currentTime - lastEventTime);

@@ -37,8 +37,8 @@ namespace ProductionFlowSimulation
         protected override object CreateInstance(Type itemType)
         {
             object o = base.CreateInstance(itemType);
-            if((o is DESElement) && DESElementAddedEvent != null){
-                DESElementAddedEvent(this, (DESElement)o);
+            if((o is DESElement element) && DESElementAddedEvent != null){
+                DESElementAddedEvent(this, element);
             }
             return o;
         }
@@ -61,8 +61,7 @@ namespace ProductionFlowSimulation
 
         private void DESCollectionElementEditor_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if(DESElementPropertyValueChangedEvent != null)
-                DESElementPropertyValueChangedEvent(this, e);
+            DESElementPropertyValueChangedEvent?.Invoke(this, e);
 
         }
 
