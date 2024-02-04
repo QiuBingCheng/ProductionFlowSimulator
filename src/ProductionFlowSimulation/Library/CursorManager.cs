@@ -22,9 +22,6 @@ namespace DiscreteEventSimulationLibrary
 
     internal class CursorManager
     {
-        //string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        //string parentDirectory = Path.Combine(currentDirectory, "..");
-
         static string BaseDir = Path.Combine("..", "..", "Resources", "cursors");
 
         internal static Dictionary<CursorType, string> cursorPaths = new Dictionary<CursorType, string>
@@ -49,7 +46,7 @@ namespace DiscreteEventSimulationLibrary
         internal static Cursor SetCursor(CursorType cursorType)
         {
             IntPtr ptr = LoadCursorFromFile(cursorPaths[cursorType]);
-            CurrentCursorType = CursorType.Module;
+            CurrentCursorType = cursorType;
             return new Cursor(ptr);
         }
 

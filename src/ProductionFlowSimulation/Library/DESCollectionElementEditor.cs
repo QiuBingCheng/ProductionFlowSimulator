@@ -1,10 +1,6 @@
 ﻿using DiscreteEventSimulationLibrary;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ProductionFlowSimulation
@@ -52,9 +48,9 @@ namespace ProductionFlowSimulation
            
             foreach (Control c in theForm.Controls[0].Controls)
             {
-                if(c is PropertyGrid)
+                if(c is PropertyGrid grid)
                 {
-                    innerPropertyGrid = ((PropertyGrid)c);
+                    innerPropertyGrid = grid;
                     innerPropertyGrid.PropertyValueChanged += DESCollectionElementEditor_PropertyValueChanged;
                     innerPropertyGrid.HelpVisible = true;
                     break;

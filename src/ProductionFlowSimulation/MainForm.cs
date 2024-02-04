@@ -13,10 +13,6 @@ namespace ProductionFlowSimulation
 {
     public partial class MainForm : Form
     {
-        // Initialize custom cursor manager
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern IntPtr LoadCursorFromFile(string path);
-      
         Rectangle theRectangle = new Rectangle();
 
         Point startPoint;
@@ -29,10 +25,13 @@ namespace ProductionFlowSimulation
         public MainForm()
         {
             InitializeComponent();
-            // Initialize custom cursor manager
-
-
+            InitializeChart();
+            InitializeElementPropertyEditor();
             this.CenterToScreen();
+        }
+
+        private void InitializeElementPropertyEditor()
+        {
             ppgObject.SelectedObject = theModel;
             cbbObject.Items.Add(theModel.Name);
             cbbObject.SelectedIndex = 0;
@@ -42,12 +41,10 @@ namespace ProductionFlowSimulation
             cbbObject.DropDownStyle = ComboBoxStyle.DropDownList;
             cbbObject.BackColor = Color.Blue;
             cbbObject.ForeColor = Color.AntiqueWhite;
+        }
 
-            //
-            btnNext.Enabled = false;
-            btnNextToEnd.Enabled = false;
-
-            //chart
+        private void InitializeChart()
+        {
             chartEvent.ChartAreas[0].AxisX.Title = "Time";
             chartEvent.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
             chartEvent.ChartAreas[0].AxisX.LabelAutoFitMaxFontSize = 12;
@@ -58,18 +55,19 @@ namespace ProductionFlowSimulation
             chartEvent.ChartAreas[0].AxisY.Maximum = 5;
             chartEvent.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
             chartEvent.ChartAreas[0].AxisY.LabelAutoFitMaxFontSize = 12;
-    
-            Charting.CustomLabel label = new Charting.CustomLabel();
+
             string[] events = { "Arrival", "ServiceDone", "BreakDown", "Repaired" };
             for (int i = 0; i < events.Length; i++)
             {
-                label = new Charting.CustomLabel();
-                label.Text = events[i];
-                label.FromPosition = i+0.6;
-                label.ToPosition = i+1.4;
+                Charting.CustomLabel label = new Charting.CustomLabel
+                {
+                    Text = events[i],
+                    FromPosition = i + 0.6,
+                    ToPosition = i + 1.4
+                };
                 chartEvent.ChartAreas[0].AxisY.CustomLabels.Add(label);
             }
-           
+
             Charting.Series series = new Charting.Series();
             series.MarkerStyle = Charting.MarkerStyle.Cross;
             series.ChartType = Charting.SeriesChartType.Point;
@@ -96,6 +94,112 @@ namespace ProductionFlowSimulation
             chartServerGantt.ChartAreas[0].AxisX.Minimum = 0;
             chartServerGantt.ChartAreas[0].AxisX.LabelAutoFitMaxFontSize = 12;
         }
+
+        #region operation trigger
+  
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (selectedElement == null)
+            {
+                MessageBox.Show("You must select a element to delete", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                BtnSelect_Click(null, null);
+                return;
+            }
+            if (selectedElement.GetType().Name == "ClientGenerator")
+            {
+                theModel.ClientGenerators.Remove((ClientGenerator)selectedElement);
+            }
+            allElements.Remove(selectedElement);
+            cbbObject.Items.Remove(selectedElement.Name);
+            cbbObject.SelectedIndex = 0;
+            selectedElement = null;
+            ppgObject.SelectedObject = theModel;
+            panelMain.Refresh();
+        }
+
+        private void btnModule_Click(object sender, EventArgs e)
+        {
+            this.Cursor = CursorManager.SetCursor(CursorType.Module);
+        }
+
+        private void btnServerTypes_DropDownItemClicked(object sender, RibbonItemEventArgs e)
+        {
+            this.Cursor = CursorManager.SetCursor((e.Item.Text == "Server") ? CursorType.Server : CursorType.Machine);
+
+        }
+
+        private void BtnQueue_Click(object sender, EventArgs e)
+        {
+            this.Cursor = CursorManager.SetCursor(CursorType.Queue);
+        }
+
+        private void BtnItinerary_Click(object sender, EventArgs e)
+        {
+            this.Cursor = CursorManager.SetCursor(CursorType.Itinerary);
+        }
+
+        private void BtnLink_Click(object sender, EventArgs e)
+        {
+            this.Cursor = CursorManager.SetCursor(CursorType.Link);
+            selectedElement = null;
+        }
+
+        private void BtnSelect_Click(object sender, EventArgs e)
+        {
+            this.Cursor = CursorManager.SetCursor(CursorType.Select);
+        }
+        private void BtnReleaser_Click(object sender, EventArgs e)
+        {
+            this.Cursor = CursorManager.SetCursor(CursorType.Release);
+        }
+        ContinuousRandomGeneratorType currentDistribution = ContinuousRandomGeneratorType.None;
+        private void Btn_DropDownItemClicked(object sender, RibbonItemEventArgs e)
+        {
+            this.Cursor = CursorManager.SetCursor(CursorType.Distribution);
+
+            switch (e.Item.Text)
+            {
+                case "Uniform":
+                    currentDistribution = ContinuousRandomGeneratorType.Uniform;
+                    break;
+                case "Exponential":
+                    currentDistribution = ContinuousRandomGeneratorType.Exponential;
+                    break;
+                case "Gamma":
+                    currentDistribution = ContinuousRandomGeneratorType.Gamma;
+                    break;
+                case "Chisquare":
+                    currentDistribution = ContinuousRandomGeneratorType.Chisquare;
+                    break;
+                default:
+                    currentDistribution = ContinuousRandomGeneratorType.None;
+                    break;
+            }
+            selectedElement = null;
+
+        }
+
+
+        private void BtnReset_Click(object sender, EventArgs e)
+        {
+            //check generator
+            if (theModel.ClientGenerators.Count == 0)
+            {
+                MessageBox.Show("At least one client generator must be generated", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            else if (theModel.ClientGenerators[0].InterarrivalType == ContinuousRandomGeneratorType.None)
+            {
+                MessageBox.Show("No random variate generator is specified in time generator of the client generator ", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            theModel.ResetSimulation();
+            UpdateEventChart();
+            btnNext.Enabled = true;
+            btnNextToEnd.Enabled = true;
+        }
+        #endregion
 
         private void DESCollectionElementEditor_DESElementPropertyValueChangedEvent(object s, PropertyValueChangedEventArgs e)
         {
@@ -235,14 +339,14 @@ namespace ProductionFlowSimulation
             else
             {
                 endPoint = panelMain.PointToScreen(e.Location);
-                DrawRectangleWhenMove();
+                DrawBorderWhenMove();
 
             }
         }
 
-        private void DrawRectangleWhenMove()
+        private void DrawBorderWhenMove()
         {
-            // Clear the previous rectangle
+            // Clear the previous rectangle border
             if (theRectangle != Rectangle.Empty)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
@@ -252,10 +356,95 @@ namespace ProductionFlowSimulation
             theRectangle = new Rectangle(startPoint,
                 new Size(endPoint.X - startPoint.X, endPoint.Y - startPoint.Y));
 
-            // Draw the new rectangle by calling DrawReversibleFrame again.  
+            // Draw the new rectangle border by calling DrawReversibleFrame again.  
             ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
         }
 
+        private void AddServiceNode()
+        {
+            ServiceNode serviceNode = new ServiceNode
+            {
+                Bound = theRectangle
+            };
+            allElements.Add(serviceNode);
+            cbbObject.Items.Add(serviceNode.Name);
+            theModel.ServiceNodes.Add(serviceNode);
+        }
+
+        private void AddServer(ServiceNode serviceNode)
+        {
+            Server server = new Server
+            {
+                Bound = theRectangle,
+                ParentNode = serviceNode
+            };
+            serviceNode.Servers.Add(server);
+            allElements.Add(server);
+            cbbObject.Items.Add(server.Name);
+        }
+      
+        private void AddQueue(ServiceNode serviceNode)
+        {
+            TimeQueue queue = new TimeQueue
+            {
+                Bound = theRectangle
+            };
+            serviceNode.Queues.Add(queue);
+            allElements.Add(queue);
+            cbbObject.Items.Add(queue.Name);
+        }
+
+        private void AddMachine(ServiceNode serviceNode)
+        {
+            Machine machine = new Machine
+            {
+                Bound = theRectangle,
+                ParentNode = serviceNode
+            };
+            serviceNode.Servers.Add(machine);
+            allElements.Add(machine);
+            cbbObject.Items.Add(machine.Name);
+        }
+
+        private void AddItinerary()
+        {
+            Itinerary it = new Itinerary
+            {
+                Bound = theRectangle
+            };
+            allElements.Add(it);
+            cbbObject.Items.Add(it.Name);
+            theModel.Itineraries.Add(it);
+        }
+
+        private void AddClientGenerator()
+        {
+            ClientGenerator cg = new ClientGenerator
+            {
+                Bound = theRectangle
+            };
+            allElements.Add(cg);
+            cbbObject.Items.Add(cg.Name);
+            theModel.ClientGenerators.Add(cg);
+        }
+
+        private ServiceNode GetServiceNodeContainsTheRectangle()
+        {
+            ServiceNode serviceNode;
+            for (int i = 0; i < allElements.Count; i++)
+            {
+                if (!(allElements[i] is ServiceNode)) continue;
+
+                serviceNode = (ServiceNode)allElements[i];
+                if (serviceNode.Bound.Contains(theRectangle.Location))
+                {
+
+                    return serviceNode;
+                }
+            }
+
+            return null;
+        }
         private void panelMain_MouseUp(object sender, MouseEventArgs e)
         {
             //ControlPaint.DrawReversibleLine(mouseDownScreenPoint, currentScreenPoint, Color.Red);
@@ -323,62 +512,44 @@ namespace ProductionFlowSimulation
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
 
-                if (theRectangle.Height < 30 || theRectangle.Height < 30)
+                if (theRectangle.Height < 30 || theRectangle.Width < 30)
                 {
-                    theRectangle = new Rectangle(0, 0, 0, 0);
+                    theRectangle = new Rectangle();
                     return;
                 }
 
-                ServiceNode sn = new ServiceNode();
-               
                 theRectangle.Location = panelMain.PointToClient(theRectangle.Location);
-                sn.Bound = theRectangle;
-                allElements.Add(sn);
-                cbbObject.Items.Add(sn.Name);
-                theModel.ServiceNodes.Add(sn);
-                theRectangle = new Rectangle(0, 0, 0, 0);
+                AddServiceNode();
 
             }
             else if (CursorManager.CurrentCursorType == CursorType.Queue)
             {
 
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
-                if (theRectangle.Height < 15 || theRectangle.Height < 15)
+                if (theRectangle.Height < 15 || theRectangle.Width < 15)
                 {
-                    theRectangle = new Rectangle(0, 0, 0, 0);
+                    theRectangle = new Rectangle();
                     return;
                 }
 
                 theRectangle.Location = panelMain.PointToClient(theRectangle.Location);
-
-                for (int i = 0; i < allElements.Count; i++)
+                ServiceNode serviceNode = GetServiceNodeContainsTheRectangle();
+                if (serviceNode is null)
                 {
-                    if (!(allElements[i] is ServiceNode)) continue;
-
-                    ServiceNode sn;
-                    sn = (ServiceNode)allElements[i];
-                    if (sn.Bound.Contains(theRectangle.Location))
-                    {
-                        TimeQueue queue = new TimeQueue();
-                        queue.Bound = theRectangle;
-                        sn.Queues.Add(queue);
-                        allElements.Add(queue);
-                        cbbObject.Items.Add(queue.Name);
-                        panelMain.Refresh();
-                        theRectangle = new Rectangle(0, 0, 0, 0);
-                        return;
-                    }
-
+                    MessageBox.Show("You must put the queue in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
 
-                MessageBox.Show("You must put the queue in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                AddQueue(serviceNode);
+
             }
+
             else if (CursorManager.CurrentCursorType == CursorType.Server)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
-                if (theRectangle.Height < 15 || theRectangle.Height < 15)
+                if (theRectangle.Height < 15 || theRectangle.Width < 15)
                 {
-                    theRectangle = new Rectangle(0, 0, 0, 0);
+                    theRectangle = new Rectangle();
                     return;
                 }
                 theRectangle.Location = panelMain.PointToClient(theRectangle.Location);
@@ -387,34 +558,22 @@ namespace ProductionFlowSimulation
                 else
                     theRectangle.Width = theRectangle.Height;
 
-                ServiceNode sn;
-                for (int i = 0; i < allElements.Count; i++)
+                ServiceNode serviceNode = GetServiceNodeContainsTheRectangle();
+                if (serviceNode is null)
                 {
-                    if (!(allElements[i] is ServiceNode)) continue;
-
-                    sn = (ServiceNode)allElements[i];
-                    if (sn.Bound.Contains(theRectangle.Location))
-                    {
-                        Server server = new Server();
-                        server.Bound = theRectangle;
-                        server.ParentNode = sn;
-                        sn.Servers.Add(server);
-                        allElements.Add(server);
-                        cbbObject.Items.Add(server.Name);
-                        panelMain.Refresh();
-                        theRectangle = new Rectangle(0, 0, 0, 0);
-                        return;
-                    }
+                    MessageBox.Show("You must put the server in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
 
-                MessageBox.Show("You must put the server in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                AddServer(serviceNode);
+
             }
             else if (CursorManager.CurrentCursorType == CursorType.Machine)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
-                if (theRectangle.Height < 15 || theRectangle.Height < 15)
+                if (theRectangle.Height < 15 || theRectangle.Width < 15)
                 {
-                    theRectangle = new Rectangle(0, 0, 0, 0);
+                    theRectangle = new Rectangle();
                     return;
                 }
 
@@ -425,27 +584,14 @@ namespace ProductionFlowSimulation
                     theRectangle.Width = theRectangle.Height;
 
 
-                ServiceNode sn;
-                for (int i = 0; i < allElements.Count; i++)
+                ServiceNode serviceNode = GetServiceNodeContainsTheRectangle();
+                if (serviceNode is null)
                 {
-                    if (!(allElements[i] is ServiceNode)) continue;
-
-                    sn = (ServiceNode)allElements[i];
-                    if (sn.Bound.Contains(theRectangle.Location))
-                    {
-                        Machine machine = new Machine();
-                        machine.Bound = theRectangle;
-                        machine.ParentNode = sn;
-                        sn.Servers.Add(machine);
-                        allElements.Add(machine);
-                        cbbObject.Items.Add(machine.Name);
-                        panelMain.Refresh();
-                        theRectangle = new Rectangle(0, 0, 0, 0);
-                        return;
-                    }
+                    MessageBox.Show("You must put the machine in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
+                AddMachine(serviceNode);
 
-                MessageBox.Show("You must put the machine in a service node", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else if (CursorManager.CurrentCursorType == CursorType.Select && isDrag)
             {
@@ -456,9 +602,9 @@ namespace ProductionFlowSimulation
             else if (CursorManager.CurrentCursorType == CursorType.Itinerary)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
-                if (theRectangle.Height < 15 || theRectangle.Height < 15)
+                if (theRectangle.Height < 15 || theRectangle.Width < 15)
                 {
-                    theRectangle = new Rectangle(0, 0, 0, 0);
+                    theRectangle = new Rectangle();
                     return;
                 }
 
@@ -468,20 +614,14 @@ namespace ProductionFlowSimulation
                 else
                     theRectangle.Width = theRectangle.Height;
 
-                Itinerary it = new Itinerary();
-                it.Bound = theRectangle;
-                allElements.Add(it);
-                cbbObject.Items.Add(it.Name);
-                theModel.Itineraries.Add(it);
-                panelMain.Refresh();
-                theRectangle = new Rectangle(0, 0, 0, 0);
+                AddItinerary();
             }
             else if (CursorManager.CurrentCursorType == CursorType.Release)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
                 if (theRectangle.Height < 15 || theRectangle.Height < 15)
                 {
-                    theRectangle = new Rectangle(0, 0, 0, 0);
+                    theRectangle = new Rectangle();
                     return;
                 }
 
@@ -491,16 +631,11 @@ namespace ProductionFlowSimulation
                     theRectangle.Width = theRectangle.Height;
 
                 theRectangle.Location = panelMain.PointToClient(theRectangle.Location);
-                ClientGenerator cg = new ClientGenerator();
-                cg.Bound = theRectangle;
-                allElements.Add(cg);
-                cbbObject.Items.Add(cg.Name);
-                theModel.ClientGenerators.Add(cg);
-                panelMain.Refresh();
-                theRectangle = new Rectangle(0, 0, 0, 0);
+                AddClientGenerator();
             }
             
             panelMain.Refresh();
+            theRectangle = new Rectangle();
         }
 
         private void panelMain_Paint(object sender, PaintEventArgs e)
@@ -635,7 +770,7 @@ namespace ProductionFlowSimulation
             {
                 selectedElement = allElements[cbbObject.SelectedIndex - 1];
                 ppgObject.SelectedObject = selectedElement;
-                btnSelect_Click(null, null);
+                BtnSelect_Click(null, null);
             }
             panelMain.Refresh();
         }
@@ -691,110 +826,11 @@ namespace ProductionFlowSimulation
             panelMain.Refresh();
             sr.Close();
 
-            btnSelect_Click(null, null);
+            BtnSelect_Click(null, null);
         }
 
         //
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            if (selectedElement == null)
-            {
-                MessageBox.Show("You must select a element to delete", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                btnSelect_Click(null, null);
-                return;
-            }
-            if(selectedElement.GetType().Name == "ClientGenerator")
-            {
-                theModel.ClientGenerators.Remove((ClientGenerator)selectedElement);
-            }
-            allElements.Remove(selectedElement);
-            cbbObject.Items.Remove(selectedElement.Name);
-            cbbObject.SelectedIndex = 0;
-            selectedElement = null;
-            ppgObject.SelectedObject = theModel;
-            panelMain.Refresh();
-        }
-
-        private void btnModule_Click(object sender, EventArgs e)
-        {
-            this.Cursor = CursorManager.SetCursor(CursorType.Module);
-        }
-
-        private void btnServerTypes_DropDownItemClicked(object sender, RibbonItemEventArgs e)
-        {
-            this.Cursor = CursorManager.SetCursor((e.Item.Text == "Server") ? CursorType.Server : CursorType.Machine);
-        }
-        private void btnQueue_Click(object sender, EventArgs e)
-        {
-            this.Cursor = CursorManager.SetCursor(CursorType.Queue);
-        }
-
-        private void btnItinerary_Click(object sender, EventArgs e)
-        {
-            this.Cursor = CursorManager.SetCursor(CursorType.Itinerary);
-        }
-
-        private void btnLink_Click(object sender, EventArgs e)
-        {
-            this.Cursor = CursorManager.SetCursor(CursorType.Link);
-            selectedElement = null;
-        }
-
-        private void btnSelect_Click(object sender, EventArgs e)
-        {
-            this.Cursor = CursorManager.SetCursor(CursorType.Select);
-        }
-        private void btnReleaser_Click(object sender, EventArgs e)
-        {
-            this.Cursor = CursorManager.SetCursor(CursorType.Release);
-        }
-        ContinuousRandomGeneratorType currentDistribution = ContinuousRandomGeneratorType.None;
-        private void btn_DropDownItemClicked(object sender, RibbonItemEventArgs e)
-        {
-            this.Cursor = CursorManager.SetCursor(CursorType.Distribution);
-
-            switch (e.Item.Text)
-            {
-                case "Uniform":
-                    currentDistribution = ContinuousRandomGeneratorType.Uniform;
-                    break;
-                case "Exponential":
-                    currentDistribution = ContinuousRandomGeneratorType.Exponential;
-                    break;
-                case "Gamma":
-                    currentDistribution = ContinuousRandomGeneratorType.Gamma;
-                    break;
-                case "Chisquare":
-                    currentDistribution = ContinuousRandomGeneratorType.Chisquare;
-                    break;
-                default:
-                    currentDistribution = ContinuousRandomGeneratorType.None;
-                    break;
-            }
-            selectedElement = null;
        
-        }
-
-
-        private void btnReset_Click(object sender, EventArgs e)
-        {
-            //check generator
-            if(theModel.ClientGenerators.Count == 0)
-            {
-                MessageBox.Show("At least one client generator must be generated", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            else if(theModel.ClientGenerators[0].InterarrivalType == ContinuousRandomGeneratorType.None)
-            {
-                MessageBox.Show("No random variate generator is specified in time generator of the client generator ", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            theModel.ResetSimulation();
-            UpdateEventChart();
-            btnNext.Enabled = true;
-            btnNextToEnd.Enabled = true;
-        }
 
         private void UpdateEventChart()
         {
@@ -991,5 +1027,7 @@ namespace ProductionFlowSimulation
         {
 
         }
+
+      
     }
 }

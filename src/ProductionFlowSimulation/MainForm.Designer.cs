@@ -283,7 +283,7 @@ namespace ProductionFlowSimulation
             this.btnQueue.Name = "btnQueue";
             this.btnQueue.SmallImage = ((System.Drawing.Image)(resources.GetObject("btnQueue.SmallImage")));
             this.btnQueue.Text = "Queue";
-            this.btnQueue.Click += new System.EventHandler(this.btnQueue_Click);
+            this.btnQueue.Click += new System.EventHandler(this.BtnQueue_Click);
             // 
             // btnItinerary
             // 
@@ -292,7 +292,7 @@ namespace ProductionFlowSimulation
             this.btnItinerary.Name = "btnItinerary";
             this.btnItinerary.SmallImage = ((System.Drawing.Image)(resources.GetObject("btnItinerary.SmallImage")));
             this.btnItinerary.Text = "Itinerary";
-            this.btnItinerary.Click += new System.EventHandler(this.btnItinerary_Click);
+            this.btnItinerary.Click += new System.EventHandler(this.BtnItinerary_Click);
             // 
             // btn
             // 
@@ -307,7 +307,7 @@ namespace ProductionFlowSimulation
             this.btn.SmallImage = ((System.Drawing.Image)(resources.GetObject("btn.SmallImage")));
             this.btn.Style = System.Windows.Forms.RibbonButtonStyle.DropDown;
             this.btn.Text = "Distribution";
-            this.btn.DropDownItemClicked += new System.Windows.Forms.RibbonButton.RibbonItemEventHandler(this.btn_DropDownItemClicked);
+            this.btn.DropDownItemClicked += new System.Windows.Forms.RibbonButton.RibbonItemEventHandler(this.Btn_DropDownItemClicked);
             // 
             // ribbonButton7
             // 
@@ -361,7 +361,7 @@ namespace ProductionFlowSimulation
             this.btnReleaser.Name = "btnReleaser";
             this.btnReleaser.SmallImage = ((System.Drawing.Image)(resources.GetObject("btnReleaser.SmallImage")));
             this.btnReleaser.Text = "Releaser";
-            this.btnReleaser.Click += new System.EventHandler(this.btnReleaser_Click);
+            this.btnReleaser.Click += new System.EventHandler(this.BtnReleaser_Click);
             // 
             // ribbonPanel4
             // 
@@ -380,7 +380,7 @@ namespace ProductionFlowSimulation
             this.btnSelect.Name = "btnSelect";
             this.btnSelect.SmallImage = ((System.Drawing.Image)(resources.GetObject("btnSelect.SmallImage")));
             this.btnSelect.Text = "Select";
-            this.btnSelect.Click += new System.EventHandler(this.btnSelect_Click);
+            this.btnSelect.Click += new System.EventHandler(this.BtnSelect_Click);
             // 
             // btnLink
             // 
@@ -389,7 +389,7 @@ namespace ProductionFlowSimulation
             this.btnLink.Name = "btnLink";
             this.btnLink.SmallImage = ((System.Drawing.Image)(resources.GetObject("btnLink.SmallImage")));
             this.btnLink.Text = "Link";
-            this.btnLink.Click += new System.EventHandler(this.btnLink_Click);
+            this.btnLink.Click += new System.EventHandler(this.BtnLink_Click);
             // 
             // btnDelete
             // 
@@ -424,10 +424,11 @@ namespace ProductionFlowSimulation
             this.btnReset.Name = "btnReset";
             this.btnReset.SmallImage = ((System.Drawing.Image)(resources.GetObject("btnReset.SmallImage")));
             this.btnReset.Text = "Reset";
-            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            this.btnReset.Click += new System.EventHandler(this.BtnReset_Click);
             // 
             // btnNext
             // 
+            this.btnNext.Enabled = false;
             this.btnNext.Image = global::ProductionFlowSimulator.Properties.Resources.next;
             this.btnNext.LargeImage = global::ProductionFlowSimulator.Properties.Resources.next;
             this.btnNext.Name = "btnNext";
@@ -437,6 +438,7 @@ namespace ProductionFlowSimulation
             // 
             // btnNextToEnd
             // 
+            this.btnNextToEnd.Enabled = false;
             this.btnNextToEnd.Image = global::ProductionFlowSimulator.Properties.Resources.nextToEnd;
             this.btnNextToEnd.LargeImage = global::ProductionFlowSimulator.Properties.Resources.nextToEnd;
             this.btnNextToEnd.MinimumSize = new System.Drawing.Size(30, 0);
@@ -604,7 +606,7 @@ namespace ProductionFlowSimulation
             this.tabPage1.Location = new System.Drawing.Point(4, 28);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1474, 771);
+            this.tabPage1.Size = new System.Drawing.Size(1474, 663);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Simulation Results";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -622,7 +624,7 @@ namespace ProductionFlowSimulation
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.splitContainer6);
-            this.splitContainer4.Size = new System.Drawing.Size(1468, 765);
+            this.splitContainer4.Size = new System.Drawing.Size(1468, 657);
             this.splitContainer4.SplitterDistance = 644;
             this.splitContainer4.TabIndex = 0;
             // 
@@ -642,8 +644,8 @@ namespace ProductionFlowSimulation
             // 
             this.splitContainer5.Panel2.Controls.Add(this.tbSimulation);
             this.splitContainer5.Panel2.Controls.Add(this.label2);
-            this.splitContainer5.Size = new System.Drawing.Size(644, 765);
-            this.splitContainer5.SplitterDistance = 301;
+            this.splitContainer5.Size = new System.Drawing.Size(644, 657);
+            this.splitContainer5.SplitterDistance = 258;
             this.splitContainer5.TabIndex = 0;
             // 
             // label1
@@ -665,7 +667,7 @@ namespace ProductionFlowSimulation
             this.chartQueue.Dock = System.Windows.Forms.DockStyle.Bottom;
             legend2.Name = "Legend1";
             this.chartQueue.Legends.Add(legend2);
-            this.chartQueue.Location = new System.Drawing.Point(0, 42);
+            this.chartQueue.Location = new System.Drawing.Point(0, -1);
             this.chartQueue.Name = "chartQueue";
             this.chartQueue.Size = new System.Drawing.Size(644, 259);
             this.chartQueue.TabIndex = 0;
@@ -712,8 +714,8 @@ namespace ProductionFlowSimulation
             // 
             this.splitContainer6.Panel2.Controls.Add(this.chartServerPie);
             this.splitContainer6.Panel2.Controls.Add(this.label4);
-            this.splitContainer6.Size = new System.Drawing.Size(820, 765);
-            this.splitContainer6.SplitterDistance = 298;
+            this.splitContainer6.Size = new System.Drawing.Size(820, 657);
+            this.splitContainer6.SplitterDistance = 254;
             this.splitContainer6.TabIndex = 0;
             // 
             // chartServerGantt
@@ -723,7 +725,7 @@ namespace ProductionFlowSimulation
             this.chartServerGantt.Dock = System.Windows.Forms.DockStyle.Bottom;
             legend3.Name = "Legend1";
             this.chartServerGantt.Legends.Add(legend3);
-            this.chartServerGantt.Location = new System.Drawing.Point(0, 42);
+            this.chartServerGantt.Location = new System.Drawing.Point(0, -2);
             this.chartServerGantt.Name = "chartServerGantt";
             this.chartServerGantt.Size = new System.Drawing.Size(820, 256);
             this.chartServerGantt.TabIndex = 3;
@@ -750,7 +752,7 @@ namespace ProductionFlowSimulation
             this.chartServerPie.Legends.Add(legend4);
             this.chartServerPie.Location = new System.Drawing.Point(0, 29);
             this.chartServerPie.Name = "chartServerPie";
-            this.chartServerPie.Size = new System.Drawing.Size(820, 434);
+            this.chartServerPie.Size = new System.Drawing.Size(820, 370);
             this.chartServerPie.TabIndex = 4;
             this.chartServerPie.Text = "chart1";
             // 
@@ -768,7 +770,7 @@ namespace ProductionFlowSimulation
             // 
             this.tabPage3.Location = new System.Drawing.Point(4, 28);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1474, 771);
+            this.tabPage3.Size = new System.Drawing.Size(1474, 663);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Service Consumers";
             this.tabPage3.UseVisualStyleBackColor = true;
