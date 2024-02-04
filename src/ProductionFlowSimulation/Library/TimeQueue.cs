@@ -54,8 +54,8 @@ namespace DiscreteEventSimulationLibrary
 
         public TimeQueue()
         {
-            base.Name = $"Queue{++instanceCount}";
-            seriesClients = new Series(base.Name);
+            Name = $"Queue{++instanceCount}";
+            seriesClients = new Series(Name);
             BackColor = Color.White;
         }
         public override void Draw(Graphics g)
@@ -123,7 +123,6 @@ namespace DiscreteEventSimulationLibrary
             seriesClients.BorderWidth = 3;
         }
        
-
         public bool AddClient(double time,Client theClient)
         {
             if (theQueue.Count >= capacity) return false;

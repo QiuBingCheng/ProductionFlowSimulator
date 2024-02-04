@@ -6,9 +6,7 @@ using System.Drawing;
 using System.Drawing.Design;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DiscreteEventSimulationLibrary
 {
@@ -193,7 +191,7 @@ namespace DiscreteEventSimulationLibrary
 
         }
 
-        internal void SaveToFile(StreamWriter sw)
+        internal new void SaveToFile(StreamWriter sw)
         {
             base.SaveToFile(sw);
             sw.WriteLine($"ClientArrivalTimeGeneratorType: {(int)interarrivalType}");
@@ -214,7 +212,7 @@ namespace DiscreteEventSimulationLibrary
             sb.AppendLine($"Interarrival Time Average:{AverageInterarrivalTime:0.00} STD:{InterarrivalTimeSTD:0.00}");
         }
 
-        internal void ReadFromFile(StreamReader sr)
+        internal new void ReadFromFile(StreamReader sr)
         {
             base.ReadFromFile(sr);
 

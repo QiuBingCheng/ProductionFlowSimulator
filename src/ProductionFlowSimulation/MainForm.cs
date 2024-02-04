@@ -1,14 +1,12 @@
 ﻿using DiscreteEventSimulationLibrary;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Charting = System.Windows.Forms.DataVisualization.Charting;
 
 namespace ProductionFlowSimulation
@@ -529,22 +527,32 @@ namespace ProductionFlowSimulation
             }
         }
 
-        private void HandleSelectMode(MouseEventArgs e)
+        private int GetIndexofLatestElementAtTheLocation(Point location)
         {
+            // Retrieve the element generated at the latest time on that position
             for (int i = allElements.Count - 1; i >= 0; i--)
             {
-                if (allElements[i].Bound.Contains(e.Location))
+                if (allElements[i].Bound.Contains(location))
                 {
-                    selectedElement = allElements[i];
-                    ppgObject.SelectedObject = selectedElement;
-                    cbbObject.SelectedIndex = i + 1;
-
-                    Point pt = panelMain.PointToScreen(new Point(selectedElement.Bound.X, selectedElement.Bound.Y));
-                    theRectangle = new Rectangle(pt.X, pt.Y, selectedElement.Bound.Width, selectedElement.Bound.Height);
-                    isDrag = true;
-                    break;
+                    return i;
                 }
             }
+            return -1;
+        }
+
+        private void HandleSelectMode(MouseEventArgs e)
+        {
+            int selectedIndex = GetIndexofLatestElementAtTheLocation(e.Location);
+            if (selectedIndex == -1)
+                return;
+
+
+            selectedElement = allElements[selectedIndex];
+            ppgObject.SelectedObject = selectedElement;
+            cbbObject.SelectedIndex = selectedIndex + 1;
+            Point pt = panelMain.PointToScreen(new Point(selectedElement.Bound.X, selectedElement.Bound.Y));
+            theRectangle = new Rectangle(pt.X, pt.Y, selectedElement.Bound.Width, selectedElement.Bound.Height);
+            isDrag = true;
         }
 
         private void HandleLinkMode(MouseEventArgs e)
@@ -665,63 +673,55 @@ namespace ProductionFlowSimulation
         }
         private void panelMain_MouseUp(object sender, MouseEventArgs e)
         {
-            //ControlPaint.DrawReversibleLine(mouseDownScreenPoint, currentScreenPoint, Color.Red);
 
             if (CursorManager.CurrentCursorType == CursorType.Link)
             {
-                for (int i = allElements.Count - 1; i >= 0; i--)
+                int selectedIndex = GetIndexofLatestElementAtTheLocation(e.Location);
+                if (selectedIndex == -1)
                 {
-                    if (allElements[i].Bound.Contains(e.Location))
+                    selectedElement = null;
+                    ControlPaint.DrawReversibleLine(startPoint, endPoint, Color.Red);
+                    panelMain.Refresh();
+                    return;
+                }
+
+                DESElement targetElement = allElements[selectedIndex];
+
+                // From queue link to server
+                if (selectedElement is TimeQueue queue)
+                {
+                    if (targetElement is Server server && !server.Queues.Contains(queue))
                     {
-                        string fromElement = selectedElement.GetType().Name;
-                        string toElement = allElements[i].GetType().Name;
+                        server.Queues.Add(queue);
+                    }
 
-                        if (fromElement == "TimeQueue" && toElement == "Server")
-                        {
-
-                            if (!((Server)allElements[i]).Queues.Contains((TimeQueue)selectedElement)) { 
-                                ((Server)allElements[i]).Queues.Add((TimeQueue)selectedElement);
-                            }
-                        }
-                        else if (fromElement == "TimeQueue" && toElement == "Machine")
-                        {
-                            if (!((Machine)allElements[i]).Queues.Contains((TimeQueue)selectedElement)){
-                                ((Machine)allElements[i]).Queues.Add((TimeQueue)selectedElement);
-                            }
-                            
-                        }
-                        else if (fromElement == "ClientGenerator" && toElement == "Itinerary")
-                        {
-                            if (!((ClientGenerator)selectedElement).Itineraries.Contains((Itinerary)allElements[i]))
-                            {
-                                ((ClientGenerator)selectedElement).Itineraries.Add((Itinerary)allElements[i]);
-                                ((ClientGenerator)selectedElement).GenerationWeights.Add(100);
-                            }
-                        }
-                        else if (fromElement == "Itinerary" && toElement == "ServiceNode")
-                        {
-                            Itinerary it = (Itinerary)selectedElement;
-                            foreach (Visit visit in it.Visits )
-                            {
-                                if(visit.TheNode == (ServiceNode)allElements[i])
-                                {
-                                    selectedElement = null;
-                                    return;
-                                }
-                            }
-                            Visit theVisit = new Visit();
-                            theVisit.TheNode = (ServiceNode)allElements[i];
-                            cbbObject.Items.Add(theVisit.Name);
-                            allElements.Add(theVisit);
-                            ((Itinerary)selectedElement).Visits.Add(theVisit);
-                        }
-                        selectedElement = null;
-                        panelMain.Refresh();
-                        return;
+                    else if(targetElement is Machine machine && !machine.Queues.Contains(queue))
+                    {
+                        machine.Queues.Add(queue);
                     }
                 }
-                selectedElement = null;
 
+                // From client generator link to itinerary
+                else if (selectedElement is ClientGenerator clientGenerator && targetElement is Itinerary itinerary && !clientGenerator.Itineraries.Contains(itinerary))
+                {
+                    clientGenerator.Itineraries.Add(itinerary);
+                }
+
+                // From itinerary link to servicenode
+                // Ensure no matching service node in itinerary2's Visits collection
+                else if (selectedElement is Itinerary itinerary2 && targetElement is ServiceNode serviceNode && !itinerary2.Visits.Any(visit => visit.TheNode == serviceNode))
+                {
+                  
+                    Visit theVisit = new Visit
+                    {
+                        TheNode = serviceNode
+                    };
+                    cbbObject.Items.Add(theVisit.Name);
+                    allElements.Add(theVisit);
+                    itinerary2.Visits.Add(theVisit);
+                }
+
+                selectedElement = null;
                 ControlPaint.DrawReversibleLine(startPoint, endPoint, Color.Red);
                 panelMain.Refresh();
 
@@ -922,7 +922,6 @@ namespace ProductionFlowSimulation
                     PointF point5 = new PointF(Bound.Right, Bound.Bottom);
                     PointF[] curvePoints = { point1, point2, point5, point4, point3 };
                     it.Visits[i].polygonPoints = curvePoints;
-                    //points.Add(curvePoints);
                     Point center = new Point(Bound.Left + Bound.Width / 2,
                                     Bound.Top + Bound.Height / 2);
 
