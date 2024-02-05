@@ -27,7 +27,7 @@ namespace DiscreteEventSimulationLibrary
         static int instanceCount;
         public int DropCount;
         #region Properties
-        [CategoryAttribute("Model"), DescriptionAttribute("")]
+        [Category("Model"), Description("")]
         public ContinuousRandomGeneratorType InterarrivalType { get => interarrivalType;
             set {
 
@@ -38,16 +38,16 @@ namespace DiscreteEventSimulationLibrary
                 }
         }
         [TypeConverter(typeof(ExpandableObjectConverter))]
-        [CategoryAttribute("Model"), DescriptionAttribute("")]
+        [Category("Model"), Description("")]
         public RandomVariateGenerator InterarrivalTimeGenerator { get => interarrivalTimeGenerator; set => interarrivalTimeGenerator = value; }
-        [CategoryAttribute("Model"), DescriptionAttribute("")]
+        [Category("Model"), Description("")]
         public int CeasesTime { get => ceasesTime; set => ceasesTime = value; }
 
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [Category("Statistics"), Description("")]
         public int TotalCount { get => totalCount; }
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [Category("Statistics"), Description("")]
         public double TotalInterarrivalTime { get => totalInterarrivalTime;}
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [Category("Statistics"), Description("")]
         public double AverageInterarrivalTime { 
             get
             {
@@ -57,7 +57,7 @@ namespace DiscreteEventSimulationLibrary
                 return 0;
             }
         }
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [CategoryAttribute("Statistics"), Description("")]
         public double InterarrivalTimeSTD
         {
             get
@@ -68,19 +68,17 @@ namespace DiscreteEventSimulationLibrary
                 return 0;
             }
         }
-        [CategoryAttribute("Model"), DescriptionAttribute("")]
+        [Category("Model"), Description("")]
         [Editor(typeof(DESCollectionElementEditor), typeof(UITypeEditor))]
         public List<Itinerary> Itineraries
         {
-            get => itineraries; set
-            { 
-                itineraries = value; 
-            }
+            get => itineraries;
+            set => itineraries = value;
         }
 
-        [CategoryAttribute("Model"), DescriptionAttribute("")]
+        [Category("Model"), Description("")]
         public List<int> GenerationWeights { get => generationWeights; set => generationWeights = value; }
-        [CategoryAttribute("Statistics"), DescriptionAttribute("")]
+        [Category("Statistics"), Description("")]
         public int DroppedCount { get => DropCount; }
 
         #endregion
@@ -131,6 +129,11 @@ namespace DiscreteEventSimulationLibrary
             BackColor = Color.Tomato;
             itineraries = new List<Itinerary>();
             GenerationWeights = new List<int>();
+        }
+        public void AddItinerary(Itinerary it)
+        {
+            itineraries.Add(it);
+            GenerationWeights.Add(1);
         }
 
         internal override void DrawLineToCollections(Graphics g)

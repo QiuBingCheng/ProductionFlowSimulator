@@ -575,7 +575,8 @@ namespace ProductionFlowSimulation
                 {
                     if (visit.Bound.Contains(e.Location))
                     {
-                        HandleVisitDistribution(visit);
+                        visit.ServiceTimeGeneratorType = currentDistribution;
+                        panelMain.Refresh();
                         return;
                     }
                 }
@@ -585,22 +586,13 @@ namespace ProductionFlowSimulation
             {
                 if (clientGenerator.Bound.Contains(e.Location))
                 {
-                    HandleClientGeneratorDistribution(clientGenerator);
+                    clientGenerator.InterarrivalType = currentDistribution;
+                    panelMain.Refresh();
                     return;
                 }
             }
-        }
 
-        private void HandleVisitDistribution(Visit visit)
-        {
-            visit.ServiceTimeGeneratorType = currentDistribution;
-            panelMain.Refresh();
-        }
 
-        private void HandleClientGeneratorDistribution(ClientGenerator clientGenerator)
-        {
-            clientGenerator.InterarrivalType = currentDistribution;
-            panelMain.Refresh();
         }
 
         #endregion
@@ -704,7 +696,7 @@ namespace ProductionFlowSimulation
                 // From client generator link to itinerary
                 else if (selectedElement is ClientGenerator clientGenerator && targetElement is Itinerary itinerary && !clientGenerator.Itineraries.Contains(itinerary))
                 {
-                    clientGenerator.Itineraries.Add(itinerary);
+                    clientGenerator.AddItinerary(itinerary);
                 }
 
                 // From itinerary link to servicenode
@@ -761,7 +753,6 @@ namespace ProductionFlowSimulation
                 AddQueue(serviceNode);
 
             }
-
             else if (CursorManager.CurrentCursorType == CursorType.Server)
             {
                 ControlPaint.DrawReversibleFrame(theRectangle, Color.Red, FrameStyle.Dashed);
@@ -860,18 +851,15 @@ namespace ProductionFlowSimulation
         #region Paint
         private void panelMain_Paint(object sender, PaintEventArgs e)
         {
-            //service node
             if (allElements.Count == 0) return;
 
-            //draw service node and line
-            HashSet<string> elementHasCollections = new HashSet<string> { "Server","Machine","ClientGenerator"};
-           
+            // Draw service nodes and line between parents and children.
             foreach (DESElement ele in allElements)
             {
-                if (ele.GetType().Name == "ServiceNode")
+                if (ele is ServiceNode)
                     ele.Draw(e.Graphics);
 
-                else if (elementHasCollections.Contains(ele.GetType().Name))
+                else if (ele is Server || ele is Machine || ele is ClientGenerator)
                     ele.DrawLineToCollections(e.Graphics);
             }
 
@@ -888,7 +876,7 @@ namespace ProductionFlowSimulation
                 itineraryOrderflag.Add(node, true);
             }
 
-            ServiceNode sn;
+            ServiceNode serviceNode;
             Rectangle Bound;
             Rectangle circleBound;
             List<Color> colors = new List<Color>();
@@ -898,20 +886,20 @@ namespace ProductionFlowSimulation
             {
                 for (int i = 0; i < it.Visits.Count; i++)
                 {
-                    sn = it.Visits[i].TheNode;
-                    if (itineraryOrderflag[sn])
+                    serviceNode = it.Visits[i].TheNode;
+                    if (itineraryOrderflag[serviceNode])
                     {
-                        int y = itineraryBottom[sn];
-                        Bound = new Rectangle(sn.Bound.Right, y, it.Bound.Width / 2, it.Bound.Height / 2);
-                        itineraryBottom[sn] = Bound.Bottom+10;
-                        itineraryOrderflag[sn] = false;
+                        int y = itineraryBottom[serviceNode];
+                        Bound = new Rectangle(serviceNode.Bound.Right, y, it.Bound.Width / 2, it.Bound.Height / 2);
+                        itineraryBottom[serviceNode] = Bound.Bottom+10;
+                        itineraryOrderflag[serviceNode] = false;
                     }
                     else
                     {
-                        int y = itineraryTop[sn]- it.Bound.Height/2;
-                        Bound = new Rectangle(sn.Bound.Right, y, it.Bound.Width / 2, it.Bound.Height / 2);
-                        itineraryTop[sn] = Bound.Top+10;
-                        itineraryOrderflag[sn] = true;
+                        int y = itineraryTop[serviceNode]- it.Bound.Height/2;
+                        Bound = new Rectangle(serviceNode.Bound.Right, y, it.Bound.Width / 2, it.Bound.Height / 2);
+                        itineraryTop[serviceNode] = Bound.Top+10;
+                        itineraryOrderflag[serviceNode] = true;
                     }
                     
                     SolidBrush sb = new SolidBrush(it.BackColor);
@@ -944,10 +932,12 @@ namespace ProductionFlowSimulation
 
             foreach (DESElement ele in allElements)
             {
-                if (ele.GetType().Name != "ServiceNode")
-                    ele.Draw(e.Graphics);
+                if (ele is ServiceNode)
+                    continue;
+                ele.Draw(e.Graphics);
             }
 
+            // Draw selection border
             if (selectedElement != null)
             {
                 selectedElement.DrawSelectionBorder(e.Graphics);
