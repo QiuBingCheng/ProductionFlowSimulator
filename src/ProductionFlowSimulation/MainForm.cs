@@ -50,19 +50,38 @@ namespace ProductionFlowSimulation
             DESCollectionElementEditor.DESElementPropertyValueChangedEvent += DESCollectionElementEditor_DESElementPropertyValueChangedEvent;
             cbbObject.DropDownStyle = ComboBoxStyle.DropDownList;
         }
+        #endregion
 
+        #region Initialization Chart
         private void InitializeChart()
         {
-            chartEvent.ChartAreas[0].AxisX.Title = "Time";
-            chartEvent.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
-            chartEvent.ChartAreas[0].AxisX.LabelAutoFitMaxFontSize = 12;
-            chartEvent.ChartAreas[0].AxisX.RoundAxisValues();
-            chartEvent.ChartAreas[0].AxisY.Title = "Event";
-            chartEvent.ChartAreas[0].AxisY.Interval = 1;
-            chartEvent.ChartAreas[0].AxisY.Minimum = 0;
-            chartEvent.ChartAreas[0].AxisY.Maximum = 5;
-            chartEvent.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
-            chartEvent.ChartAreas[0].AxisY.LabelAutoFitMaxFontSize = 12;
+            // Event Chart
+            InitializeEventChart();
+
+            // Queue Chart
+            InitializeQueueChart();
+
+            // Server Pie Chart
+            InitializeServerPieChart();
+
+            // Server Gantt Chart
+            InitializeServerGanttChart();
+        }
+
+        private void InitializeEventChart()
+        {
+            Charting.ChartArea eventChartArea = chartEvent.ChartAreas[0];
+            eventChartArea.AxisX.Title = "Time";
+            eventChartArea.AxisX.MajorGrid.Enabled = false;
+            eventChartArea.AxisX.LabelAutoFitMaxFontSize = 12;
+            eventChartArea.AxisX.RoundAxisValues();
+
+            eventChartArea.AxisY.Title = "Event";
+            eventChartArea.AxisY.Interval = 1;
+            eventChartArea.AxisY.Minimum = 0;
+            eventChartArea.AxisY.Maximum = 5;
+            eventChartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
+            eventChartArea.AxisY.LabelAutoFitMaxFontSize = 12;
 
             string[] events = { "Arrival", "ServiceDone", "BreakDown", "Repaired" };
             for (int i = 0; i < events.Length; i++)
@@ -76,31 +95,41 @@ namespace ProductionFlowSimulation
                 chartEvent.ChartAreas[0].AxisY.CustomLabels.Add(label);
             }
 
-            Charting.Series series = new Charting.Series();
-            series.MarkerStyle = Charting.MarkerStyle.Cross;
-            series.ChartType = Charting.SeriesChartType.Point;
-            series.MarkerSize = 15;
-            series.ChartArea = chartEvent.ChartAreas[0].Name;
-            series.Legend = null;
-            series.IsVisibleInLegend = false;
-            chartEvent.Series.Add(series);
+            Charting.Series eventSeries = new Charting.Series
+            {
+                MarkerStyle = Charting.MarkerStyle.Cross,
+                ChartType = Charting.SeriesChartType.Point,
+                MarkerSize = 15,
+                ChartArea = eventChartArea.Name,
+                Legend = null,
+                IsVisibleInLegend = false
+            };
+            chartEvent.Series.Add(eventSeries);
+        }
 
-            //
-            chartQueue.ChartAreas[0].AxisX.Minimum = 0;
-            chartQueue.ChartAreas[0].AxisX.RoundAxisValues();
-            chartQueue.ChartAreas[0].AxisX.Title = "Time";
-            chartQueue.ChartAreas[0].AxisY.Title = "Size";
+        private void InitializeQueueChart()
+        {
+            Charting.ChartArea queueChartArea = chartQueue.ChartAreas[0];
+            queueChartArea.AxisX.Minimum = 0;
+            queueChartArea.AxisX.RoundAxisValues();
+            queueChartArea.AxisX.Title = "Time";
+            queueChartArea.AxisY.Title = "Size";
             chartQueue.Legends[0].Position.Auto = true;
             chartQueue.Legends[0].Docking = Charting.Docking.Bottom;
+        }
 
-            //
+        private void InitializeServerPieChart()
+        {
             chartServerPie.Legends[0].Position.Auto = false;
             chartServerPie.Legends[0].Docking = Charting.Docking.Bottom;
+        }
 
-            //
-            chartServerGantt.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
-            chartServerGantt.ChartAreas[0].AxisX.Minimum = 0;
-            chartServerGantt.ChartAreas[0].AxisX.LabelAutoFitMaxFontSize = 12;
+        private void InitializeServerGanttChart()
+        {
+            Charting.ChartArea serverGanttChartArea = chartServerGantt.ChartAreas[0];
+            serverGanttChartArea.AxisX.MajorGrid.Enabled = false;
+            serverGanttChartArea.AxisX.Minimum = 0;
+            serverGanttChartArea.AxisX.LabelAutoFitMaxFontSize = 12;
         }
         #endregion
 
@@ -191,89 +220,96 @@ namespace ProductionFlowSimulation
         private void btnNextToEnd_Click(object sender, EventArgs e)
         {
             int sleepDuration = Convert.ToInt32(nudInterval.TextBoxText);
+
             while (true)
             {
-                if (theModel.RunOneEvent())
-                {
-                    if (cbShowAnimation.Checked)
-                    {
-                        ppgObject.Refresh();
-                        UpdateChartOfClient();
-                        UpdateEventChart();
-                        Thread.Sleep(sleepDuration);
-                    }
-                }
-                else
-                {
-                    tcMain.SelectedIndex = 1;
-                    btnNext.Enabled = false;
-                    btnNextToEnd.Enabled = false;
+                if (!theModel.RunOneEvent())
                     break;
+
+                if (cbShowAnimation.Checked)
+                {
+                    ppgObject.Refresh();
+                    UpdateChartOfClient();
+                    UpdateEventChart();
+                    Thread.Sleep(sleepDuration);
                 }
             }
+
+            tcMain.SelectedIndex = 1;
+            btnNext.Enabled = false;
+            btnNextToEnd.Enabled = false;
+
             tbSimulation.Text = theModel.GetSimulationResult();
-
-            //chart
             ResetChart();
+            UpdateServerGanttChart();
+            UpdateQueueChart();
+        }
 
-            //server
+        private void UpdateServerGanttChart()
+        {
             List<Server> servers = theModel.GetAllServers();
-            int serverCount = servers.Count();
+            int serverCount = servers.Count;
+            int rowCount = (int)Math.Ceiling(serverCount / 3.0);
+            int rowHeight = (int)(100.0 / rowCount) - 5;
+            int pieWidth = 33;
+
             chartServerGantt.ChartAreas[0].AxisX.Maximum = serverCount + 1;
 
             int pieY = 0;
             int pieX = 0;
-            int rowCount = (int)Math.Ceiling(serverCount / 3.0);
-            int rowHeight = (int)(100.0 / rowCount) - 5;
-            int pieWidth = 33;
             int i = 0;
             foreach (Server server in servers)
             {
-                //pie chart
+                // Update PieChart 
                 CreatePieChartArea(server.PieStates);
-                //next row
+
                 if (i % 3 == 0 && i != 0)
                 {
                     pieY += rowHeight;
                     pieX = 0;
                 }
+
                 chartServerPie.ChartAreas[server.Name].Position.X = pieX;
                 chartServerPie.ChartAreas[server.Name].Position.Y = pieY + 3;
                 chartServerPie.ChartAreas[server.Name].Position.Height = rowHeight;
                 chartServerPie.ChartAreas[server.Name].Position.Width = pieWidth;
+
                 pieX += pieWidth;
 
-                //gantt chart
+                // Update GanChart
                 server.GanttStates.ChartArea = chartServerGantt.ChartAreas[0].Name;
                 chartServerGantt.Series.Add(server.GanttStates);
                 server.GanttStates.IsVisibleInLegend = false;
 
-                Charting.CustomLabel label = new Charting.CustomLabel();
-                label.Text = server.Name;
-                label.FromPosition = i + 0.6;
-                label.ToPosition = i + 1.4;
+                Charting.CustomLabel label = new Charting.CustomLabel
+                {
+                    Text = server.Name,
+                    FromPosition = i + 0.6,
+                    ToPosition = i + 1.4
+                };
                 chartServerGantt.ChartAreas[0].AxisX.CustomLabels.Add(label);
-
                 i++;
             }
+        }
 
-            //queue
+        private void UpdateQueueChart()
+        {
             List<TimeQueue> queues = theModel.GetAllQueues();
             double maxTime = 0;
             List<Color> colors = new List<Color> { Color.Blue, Color.Red, Color.Green, Color.Purple, Color.Brown };
-            i = 0;
+
             foreach (TimeQueue queue in queues)
             {
                 if (queue.SeriesClients.Points.Max(p => p.XValue) > maxTime)
                     maxTime = queue.SeriesClients.Points.Max(p => p.XValue);
 
                 queue.SeriesClients.ChartArea = chartQueue.ChartAreas[0].Name;
-                queue.SeriesClients.Color = colors[i++];
+                queue.SeriesClients.Color = colors[queues.IndexOf(queue)];
                 chartQueue.Series.Add(queue.SeriesClients);
             }
-            chartQueue.ChartAreas[0].AxisX.RoundAxisValues();
-            chartQueue.ChartAreas[0].AxisX.Maximum = maxTime;
 
+            chartQueue.ChartAreas[0].AxisX.RoundAxisValues();
+            chartQueue.ChartAreas[0].AxisX.Maximum = Math.Ceiling(maxTime);
         }
         #endregion
 
@@ -379,6 +415,7 @@ namespace ProductionFlowSimulation
             UpdateEventChart();
             btnNext.Enabled = true;
             btnNextToEnd.Enabled = true;
+            tbSimulation.Text = "";
         }
         #endregion
 
@@ -591,8 +628,6 @@ namespace ProductionFlowSimulation
                     return;
                 }
             }
-
-
         }
 
         #endregion
@@ -981,39 +1016,54 @@ namespace ProductionFlowSimulation
                     server.Draw(graphics);
             }
         }
+
+        private Color GetPointColor(DiscreteEventType eventType)
+        {
+            switch (eventType)
+            {
+                case DiscreteEventType.ClientArrival:
+                case DiscreteEventType.ServerComplete:
+                case DiscreteEventType.ServerRepair:
+                    return Color.Blue;
+                case DiscreteEventType.ServerBreakDown:
+                    return Color.Red;
+                default:
+                    return Color.Black; // Handle the default color
+            }
+        }
+
+        private int GetPointValue(DiscreteEventType eventType)
+        {
+            switch (eventType)
+            {
+                case DiscreteEventType.ClientArrival:
+                    return 1;
+                case DiscreteEventType.ServerComplete:
+                    return 2;
+                case DiscreteEventType.ServerBreakDown:
+                    return 3;
+                case DiscreteEventType.ServerRepair:
+                    return 4;
+                default:
+                    return 0; // Handle the default value
+            }
+        }
         private void UpdateEventChart()
         {
             chartEvent.Series[0].Points.Clear();
+
             foreach (DiscreteEvent discreteEvent in theModel.FeatureEventList)
             {
-                // string[] events = { "Arrival", "ServiceDone", "BreakDown", "Repaired" };
                 Charting.DataPoint point;
-                switch (discreteEvent.EventType)
-                {
-                    case DiscreteEventType.ClientArrival:
-                        point = new Charting.DataPoint(discreteEvent.EventTime, 1);
-                        point.Color = Color.Blue;
-                        chartEvent.Series[0].Points.Add(point);
-                        break;
-                    case DiscreteEventType.ServerComplete:
-                        point = new Charting.DataPoint(discreteEvent.EventTime, 2);
-                        point.Color = Color.Blue;
-                        chartEvent.Series[0].Points.Add(point);
-                        break;
-                    case DiscreteEventType.ServerBreakDown:
-                        point = new Charting.DataPoint(discreteEvent.EventTime, 3);
-                        point.Color = Color.Red;
-                        chartEvent.Series[0].Points.Add(point);
-                        break;
-                    case DiscreteEventType.ServerRepair:
-                        point = new Charting.DataPoint(discreteEvent.EventTime, 4);
-                        point.Color = Color.Blue;
-                        chartEvent.Series[0].Points.Add(point);
-                        break;
-                }
+                Color pointColor = GetPointColor(discreteEvent.EventType);
+                point = new Charting.DataPoint(discreteEvent.EventTime, GetPointValue(discreteEvent.EventType));
+                point.Color = pointColor;
+                chartEvent.Series[0].Points.Add(point);
             }
+
             chartEvent.Refresh();
         }
+
         private void chartQueue_Click(object sender, EventArgs e)
         {
 
